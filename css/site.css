@@ -554,35 +554,36 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   height: var(--dh);
   perspective: 1500px;
 }
-/* What you glimpse through each doorway: the next room. (URLs live here so they resolve from this file.) */
-.doorway--to-parlour { --view: url("../assets/art/parlour.webp"); }
-.doorway--to-niche { --view: url("../assets/art/niche.webp"); }
-.doorway--to-hero { --view: url("../assets/art/hero.webp"); }
-.doorway--to-darbar { --view: radial-gradient(ellipse at 50% 70%, #35594a, #1F3A2E 70%); }
 .doorway--green { --door-l: url("../assets/art/door-green-l.webp"); --door-r: url("../assets/art/door-green-r.webp"); }
 .scene[data-door="right"] .doorway { left: calc(100vw + 34vw - var(--dh) * .236); }
 .scene[data-door="left"] .doorway { left: calc(-34vw - var(--dh) * .236); }
-.doorway__arch, .doorway__arch span, .doorway__arch::after {
-  -webkit-mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-  mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-}
-.doorway__arch {
+/* The surround is cut from the doors' own silhouette, so the carving hugs every scallop. */
+.doorway__frame, .doorway__frame span, .doorway__frame i {
   position: absolute;
-  left: -22%;
-  right: -22%;
-  top: -12%;
-  bottom: 0;
-  background: var(--gold);
-  filter: drop-shadow(0 18px 30px rgba(10, 4, 3, .5));
+  -webkit-mask: var(--door-l) left top / 50% 100% no-repeat, var(--door-r) right top / 50% 100% no-repeat;
+  mask: var(--door-l) left top / 50% 100% no-repeat, var(--door-r) right top / 50% 100% no-repeat;
 }
-.doorway__arch span { position: absolute; inset: 1.4% 2.4% 0; background: linear-gradient(100deg, #e4d6bf, #f7f0e4 45%, #e1d1b8); }
-.doorway__arch::after { content: ""; position: absolute; inset: 9% 12% 0; background: #1c0e0a; }
+.doorway__frame { left: -13%; right: -13%; top: -6.5%; bottom: 0; background: linear-gradient(#f0d9a4, var(--gold) 40%, #8f6c35); filter: drop-shadow(0 16px 26px rgba(10, 4, 3, .5)); }
+.doorway__frame span { left: 1.6%; right: 1.6%; top: .8%; bottom: 0; background: linear-gradient(100deg, #e1d2ba, #f8f1e6 45%, #ddcdb2); }
+/* a gold lip and a dark reveal just inside, where the doors sit */
+.doorway__frame i { left: 10%; right: 10%; top: 5.6%; bottom: 0; background: linear-gradient(#8f6c35, #2a150e 8%, #1c0e0a); }
 .doorway__view {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 60%, rgba(255, 246, 222, .5), rgba(255, 246, 222, 0) 70%), var(--view, linear-gradient(#f7deae, #d9a463)) center / cover;
+  background-color: #e9dccb;
   -webkit-mask: var(--door-l) left top / 51% 100% no-repeat, var(--door-r) right top / 51% 100% no-repeat;
   mask: var(--door-l) left top / 51% 100% no-repeat, var(--door-r) right top / 51% 100% no-repeat;
+}
+/* the floor of the next room, seen through the doorway */
+.doorway__view::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 16%;
+  background: linear-gradient(rgba(20, 8, 6, .35), rgba(20, 8, 6, 0) 60%), repeating-conic-gradient(#2a4a3b 0 25%, #efe6d6 0 50%) 0 0 / 20px 20px;
+  border-top: 3px solid #e9dcc6;
 }
 .leaf {
   position: absolute;

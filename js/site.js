@@ -69,7 +69,7 @@
   const gateScene = $("#gateScene");
   const timers = [];
   // Where the doors sit in the entrance painting (1672 x 941).
-  const ART = { w: 1672, h: 941, x: 648, y: 155, dw: 350, dh: 590 };
+  const ART = { w: 1672, h: 941, x: 645, y: 151, dw: 356, dh: 596 };
 
   function placeGate() {
     const vw = window.innerWidth, vh = window.innerHeight;
@@ -141,6 +141,20 @@
     green: wallTile({ base: "#1f3a2e", mottle: [0.07, 0.16, 0.12] }),
     mural: wallTile({ base: "#ece1cf", mottle: [0.82, 0.74, 0.62], lower: false, panels: false }),
   };
+  // Through each doorway you glimpse the wall of the room you're about to enter.
+  const glow = "radial-gradient(ellipse at 50% 35%, rgba(255, 238, 205, .38), rgba(255, 238, 205, 0) 65%)";
+  const VIEWS = {
+    lacquer: `${glow}, ${WALLS.lacquer} 50% 84% / auto 84% repeat-x, #561819`,
+    mural: `${glow}, url("assets/motifs/bloom-stem.svg") 8% 84% / auto 24% no-repeat, url("assets/motifs/bloom-stem.svg") 92% 84% / auto 30% no-repeat, url("assets/motifs/arch-green.svg") 50% 38% / auto 50% no-repeat, ${WALLS.mural} 50% 84% / auto 84% repeat-x, #ece1cf`,
+    green: `${glow}, ${WALLS.green} 50% 84% / auto 84% repeat-x, #1d3529`,
+    darbar: `url("assets/art/lantern-2.webp") 50% 0 / auto 46% no-repeat, radial-gradient(ellipse at 50% 60%, #35594a, #1F3A2E 72%)`,
+  };
+  const sceneEls = $$(".scene");
+  sceneEls.forEach((sc, i) => {
+    const next = sceneEls[i + 1] ? (sceneEls[i + 1].className.match(/scene--(\w+)/) || [])[1] : "darbar";
+    const view = $(".doorway__view", sc);
+    if (view && VIEWS[next]) view.style.background = VIEWS[next];
+  });
   $$("[data-wall]").forEach((el) => {
     const kind = (el.closest(".scene").className.match(/scene--(\w+)/) || [])[1];
     if (WALLS[kind]) el.style.backgroundImage = WALLS[kind];
