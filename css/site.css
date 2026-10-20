@@ -446,7 +446,9 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 
 /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
-.corridor { position: relative; height: 540vh; background: #140c0a; }
+.corridor { position: relative; height: 640vh; background: #140c0a; }
+/* The Darbar overlaps the corridor's last screen, so it rises straight out of the final doorway. */
+.corridor + .darbar { margin-top: -100svh; z-index: 2; }
 .corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1400px; }
 
 .scene {

@@ -186,7 +186,9 @@
     if (r.bottom < -vh || r.top > vh * 2) return;
     const p = clamp(-r.top / (r.height - vh), 0, 1);
     const n = scenes.length;
-    const cam = clamp(p / 0.97, 0, 1) * n;
+    // The walk finishes one screen early; the Darbar then rises over the last (green) doorway.
+    const pEnd = 1 - vh / (r.height - vh);
+    const cam = clamp(p / pEnd, 0, 1) * n;
 
     scenes.forEach((sc, i) => {
       const t = cam - i;
@@ -218,7 +220,8 @@
       sc.leaves[1].style.transform = `rotateY(${a.toFixed(2)}deg)`;
       sc.leaves.forEach((l) => { l.style.filter = `brightness(${(1 - 0.4 * open).toFixed(3)})`; });
 
-      if (i === n - 1) flash.style.opacity = smooth((t - 0.8) / 0.18).toFixed(3); // the last door opens onto the Darbar
+      // The last doorway fills the screen with green just as the Darbar (the same green) scrolls in.
+      if (i === n - 1) flash.style.opacity = smooth((t - 0.84) / 0.16).toFixed(3);
     });
 
     hint.style.opacity = p < 0.02 ? "1" : "0";
