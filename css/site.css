@@ -450,6 +450,8 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1400px; }
 
 .scene {
+  --floor: 15svh;
+  --dh: min(64svh, 700px);           /* door height */
   position: absolute;
   inset: 0;
   opacity: 0;
@@ -457,26 +459,46 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   will-change: transform, opacity;
 }
 .scene.is-live { visibility: visible; }
-.scene__wall { position: absolute; inset: -45%; }
-.scene--parlour .scene__wall, .scene--niche .scene__wall { inset: -20%; }
-.scene--damask .scene__wall { background: radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0) 35%, rgba(20, 8, 6, .55) 100%), var(--p-damask); background-color: var(--maroon); }
-.scene--parlour .scene__wall { background: linear-gradient(rgba(20, 8, 6, .18), rgba(20, 8, 6, .28)), url("../assets/art/parlour.webp") center / cover; }
-.scene--harlequin .scene__wall { background: radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0) 40%, rgba(20, 8, 6, .45) 100%), var(--p-harlequin); }
-.scene--niche .scene__wall { background: url("../assets/art/niche.webp") center 40% / cover; }
+/* The room is wider than the screen: the door waits round the corner, off to one side. */
+.scene__wall { position: absolute; left: -160%; right: -160%; top: -60%; bottom: var(--floor); }
+.scene--damask .scene__wall { background: var(--p-damask); background-color: var(--maroon); }
+.scene--harlequin .scene__wall { background: var(--p-harlequin); }
+.scene--vine .scene__wall { background: url("../assets/patterns/vine-green.svg") 0 0 / 195px 225px; background-color: var(--green); }
+.scene--lattice .scene__wall { background: var(--p-lattice); }
+.scene__wall::after {
+  /* skirting where the wall meets the floor, and a little shade toward the ceiling */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(20, 8, 6, .45), rgba(20, 8, 6, 0) 45%, rgba(20, 8, 6, 0) 88%, rgba(20, 8, 6, .35));
+  border-bottom: 10px solid #e9dcc6;
+  box-shadow: inset 0 -12px 0 var(--gold);
+}
+.scene__floor {
+  position: absolute;
+  left: -160%;
+  right: -160%;
+  top: calc(100% - var(--floor));
+  height: 60svh;
+  background:
+    linear-gradient(rgba(20, 8, 6, .35), rgba(20, 8, 6, 0) 30%),
+    repeating-conic-gradient(#2a4a3b 0 25%, #efe6d6 0 50%) 0 0 / 120px 120px;
+  transform: perspective(500px) rotateX(62deg);
+  transform-origin: 50% 0;
+}
 
 .scene__info {
   position: absolute;
-  top: 50%;
-  width: min(36vw, 480px);
-  padding: 34px 34px 36px;
-  transform: translateY(-50%);
+  top: calc(50% - var(--floor) / 2);
+  left: 50%;
+  width: min(44vw, 520px);
+  padding: 34px 36px 36px;
+  transform: translate(-50%, -50%);
   opacity: 0;
   transition: opacity 1.2s var(--ease), margin 1.2s var(--ease);
   margin-top: 24px;
 }
 .scene.is-info .scene__info { opacity: 1; margin-top: 0; }
-.scene[data-door="right"] .scene__info { left: 9vw; }
-.scene[data-door="left"] .scene__info { right: 9vw; }
 .scene__info span { font-size: 17px; }
 .scene__seal { width: 92px; margin-bottom: 6px; padding: 12px 16px 8px; background: var(--maroon); }
 .scene__names { margin: 6px 0 2px; font: 400 clamp(46px, 4.6vw, 70px)/1.1 var(--script); color: var(--maroon); }
@@ -491,37 +513,46 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .scene__steps { margin: 14px 0 0; font: 400 11px/1.6 var(--text); letter-spacing: .24em; text-transform: uppercase; color: var(--ink); }
 .scene__steps i { font-style: normal; color: var(--gold); margin: 0 6px; font-size: 9px; }
 
-/* An illustrated doorway: light behind, two carved leaves in front. */
+/* A doorway set into the wall: carved ivory arch, dark recess, the next room behind, two leaves, a step. */
 .doorway {
-  --h: min(70svh, 760px);
+  --door-l: url("../assets/art/door-l.webp");
+  --door-r: url("../assets/art/door-r.webp");
   position: absolute;
-  top: calc(50% - var(--h) / 2 + 2svh);
-  width: calc(var(--h) * .472);
-  height: var(--h);
+  bottom: var(--floor);
+  width: calc(var(--dh) * .472);
+  height: var(--dh);
   perspective: 1500px;
-  filter: drop-shadow(0 26px 34px rgba(10, 4, 3, .55));
 }
-.scene[data-door="right"] .doorway { right: 12vw; }
-.scene[data-door="left"] .doorway { left: 12vw; }
-.doorway::after {
-  content: "";
+/* What you glimpse through each doorway: the next room. (URLs live here so they resolve from this file.) */
+.doorway--to-parlour { --view: url("../assets/art/parlour.webp"); }
+.doorway--to-niche { --view: url("../assets/art/niche.webp"); }
+.doorway--to-hero { --view: url("../assets/art/hero.webp"); }
+.doorway--to-darbar { --view: radial-gradient(ellipse at 50% 70%, #35594a, #1F3A2E 70%); }
+.doorway--green { --door-l: url("../assets/art/door-green-l.webp"); --door-r: url("../assets/art/door-green-r.webp"); }
+.scene[data-door="right"] .doorway { left: calc(100vw + 34vw - var(--dh) * .236); }
+.scene[data-door="left"] .doorway { left: calc(-34vw - var(--dh) * .236); }
+.doorway__arch, .doorway__arch span, .doorway__arch::after {
+  -webkit-mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
+  mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
+}
+.doorway__arch {
   position: absolute;
-  left: -20%;
-  right: -20%;
-  bottom: -3%;
-  height: 6%;
-  background: radial-gradient(closest-side, rgba(10, 4, 3, .5), transparent);
-  z-index: -1;
+  left: -22%;
+  right: -22%;
+  top: -12%;
+  bottom: 0;
+  background: var(--gold);
+  filter: drop-shadow(0 18px 30px rgba(10, 4, 3, .5));
 }
-.doorway__light {
+.doorway__arch span { position: absolute; inset: 1.4% 2.4% 0; background: linear-gradient(100deg, #e4d6bf, #f7f0e4 45%, #e1d1b8); }
+.doorway__arch::after { content: ""; position: absolute; inset: 9% 12% 0; background: #1c0e0a; }
+.doorway__view {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 62%, #fffaf0, #f7deae 40%, #d9a463 100%);
+  background: radial-gradient(ellipse at 50% 60%, rgba(255, 246, 222, .5), rgba(255, 246, 222, 0) 70%), var(--view, linear-gradient(#f7deae, #d9a463)) center / cover;
   -webkit-mask: var(--door-l) left top / 51% 100% no-repeat, var(--door-r) right top / 51% 100% no-repeat;
   mask: var(--door-l) left top / 51% 100% no-repeat, var(--door-r) right top / 51% 100% no-repeat;
 }
-.doorway { --door-l: url("../assets/art/door-l.webp"); --door-r: url("../assets/art/door-r.webp"); }
-.doorway--green { --door-l: url("../assets/art/door-green-l.webp"); --door-r: url("../assets/art/door-green-r.webp"); }
 .leaf {
   position: absolute;
   top: 0;
@@ -532,6 +563,26 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 }
 .leaf--l { left: 0; transform-origin: 0 50%; }
 .leaf--r { right: 0; transform-origin: 100% 50%; }
+.doorway__step {
+  position: absolute;
+  left: -26%;
+  right: -26%;
+  bottom: -2.6svh;
+  height: 2.6svh;
+  background: linear-gradient(#f4ecdf, #d9c8ad);
+  box-shadow: 0 10px 22px rgba(10, 4, 3, .45), inset 0 1px 0 var(--gold);
+}
+.scene__lantern {
+  position: absolute;
+  top: -3vh;
+  height: min(40svh, 440px);
+  width: auto;
+  transform-origin: 50% 0;
+  animation: sway 5s var(--ease) infinite alternate;
+  filter: drop-shadow(0 0 40px rgba(255, 196, 110, .5));
+}
+.scene[data-door="right"] .scene__lantern { left: calc(100vw + 34vw - var(--dh) * .5 - 16vw); }
+.scene[data-door="left"] .scene__lantern { left: calc(-34vw + var(--dh) * .3 + 8vw); }
 
 .corridor__flash { position: absolute; inset: 0; z-index: 3; background: var(--green); opacity: 0; pointer-events: none; }
 .scene__lantern {
@@ -572,17 +623,19 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 }
 
 @media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
-  .scene__info { top: 76px; left: 16px !important; right: 16px !important; width: auto; padding: 20px 20px 22px; transform: none; }
+  .scene { --floor: 12svh; --dh: min(58svh, 560px); }
+  .scene__info { top: 44%; width: calc(100vw - 32px); padding: 22px 20px 24px; }
   .scene__info span { font-size: 15px; }
   .scene__info b { font-size: 21px; }
   .scene__seal { width: 64px; padding: 8px 10px 4px; }
   .scene__names { font-size: 40px; }
   .sw { width: 44px; height: 54px; }
   .scene__swatches { gap: 10px; }
-  .doorway { --h: min(54svh, 560px); top: auto; bottom: 4svh; }
-  .scene[data-door="right"] .doorway { right: 10vw; }
-  .scene[data-door="left"] .doorway { left: 10vw; }
-  .scene__lantern { display: none; }
+  .scene[data-door="right"] .doorway { left: calc(100vw + 60vw - var(--dh) * .236); }
+  .scene[data-door="left"] .doorway { left: calc(-60vw - var(--dh) * .236); }
+  .scene__lantern { height: 24svh; }
+  .scene[data-door="right"] .scene__lantern { left: calc(100vw + 60vw - var(--dh) * .5 - 30vw); }
+  .scene[data-door="left"] .scene__lantern { left: calc(-60vw + var(--dh) * .3 + 14vw); }
 }
 
 /* ---------- The Darbar (the one bottle-green band) ---------- */

@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/art/entrance.webp">
   <link rel="apple-touch-icon" href="assets/logos/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/site.css?v=6">
+  <link rel="stylesheet" href="css/site.css?v=8">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Aamantran Atelier","description":"Moving video invitations and wedding websites for Indian weddings.","email":"aamantranatelier@gmail.com","areaServed":"IN","sameAs":["https://www.instagram.com/aamantran.atelier/"],"image":"https://choprakhushee.github.io/Aamantran-Atelier/assets/og.jpg"}</script>
 </head>
 <body class="is-gate">
@@ -105,30 +105,43 @@
 
         <div class="scene scene--damask" data-door="right">
           <div class="scene__wall"></div>
-          <img class="scene__lantern" src="assets/art/lantern-2.webp" alt="" aria-hidden="true">
+          <div class="scene__floor"></div>
           <div class="tag scene__info">
             <div class="scene__seal" data-chhatri></div>
             <small>I · The gate</small>
             <b>Every invitation has a reveal</b>
             <span>Your guests tap a seal, gold lines engrave a chhatri, and its doors part to let them in.</span>
           </div>
-          <div class="doorway doorway--green"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt=""></div>
+          <img class="scene__lantern" src="assets/art/lantern-2.webp" alt="" aria-hidden="true">
+          <div class="doorway doorway--green doorway--to-parlour">
+            <div class="doorway__arch"><span></span></div>
+            <div class="doorway__view"></div>
+            <img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt="">
+            <span class="doorway__step"></span>
+          </div>
         </div>
 
-        <div class="scene scene--parlour" data-door="left">
+        <div class="scene scene--harlequin" data-door="left">
           <div class="scene__wall"></div>
+          <div class="scene__floor"></div>
           <div class="tag scene__info">
             <small>II · The Darbar</small>
             <b>Your names are the hero</b>
             <p class="scene__names">Ananya <i>&amp;</i> Kabir</p>
             <span>Written in a flowing hand, and always larger than any logo — ours included.</span>
           </div>
-          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
+          <img class="scene__lantern" src="assets/art/lantern-3.webp" alt="" aria-hidden="true">
+          <div class="doorway doorway--to-niche">
+            <div class="doorway__arch"><span></span></div>
+            <div class="doorway__view"></div>
+            <img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt="">
+            <span class="doorway__step"></span>
+          </div>
         </div>
 
-        <div class="scene scene--harlequin" data-door="right">
+        <div class="scene scene--vine" data-door="right">
           <div class="scene__wall"></div>
-          <img class="scene__lantern" src="assets/art/lantern-3.webp" alt="" aria-hidden="true">
+          <div class="scene__floor"></div>
           <div class="tag scene__info">
             <small>III · The parlour</small>
             <b>A room for every function</b>
@@ -140,18 +153,31 @@
               <li><i class="sw sw--damask"></i>Wedding</li>
             </ul>
           </div>
-          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
+          <img class="scene__lantern" src="assets/art/lantern-1.webp" alt="" aria-hidden="true">
+          <div class="doorway doorway--to-hero">
+            <div class="doorway__arch"><span></span></div>
+            <div class="doorway__view"></div>
+            <img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt="">
+            <span class="doorway__step"></span>
+          </div>
         </div>
 
-        <div class="scene scene--niche" data-door="left">
+        <div class="scene scene--lattice" data-door="left">
           <div class="scene__wall"></div>
+          <div class="scene__floor"></div>
           <div class="tag scene__info">
             <small>IV · The atelier</small>
             <b>Made with patience</b>
             <span>Every reveal is storyboarded and timed to your music before a single frame moves.</span>
             <p class="scene__steps">Sketch <i>◆</i> Storyboard <i>◆</i> Motion <i>◆</i> Reveal</p>
           </div>
-          <div class="doorway doorway--green"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt=""></div>
+          <img class="scene__lantern" src="assets/art/lantern-2.webp" alt="" aria-hidden="true">
+          <div class="doorway doorway--green doorway--to-darbar">
+            <div class="doorway__arch"><span></span></div>
+            <div class="doorway__view"></div>
+            <img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt="">
+            <span class="doorway__step"></span>
+          </div>
         </div>
 
         <div class="corridor__flash" id="corridorFlash" aria-hidden="true"></div>
@@ -446,6 +472,6 @@
     <div class="endcard__lattice" aria-hidden="true"></div>
   </footer>
 
-  <script src="js/site.js?v=6"></script>
+  <script src="js/site.js?v=8"></script>
 </body>
 </html>

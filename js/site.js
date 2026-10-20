@@ -143,23 +143,23 @@
     scenes.forEach((sc, i) => {
       const t = cam - i;
       const arrive = i === 0 ? 1 : smooth((t + 0.14) / 0.1); // the next room appears out of the doorway
-      const turn = smooth((t - 0.36) / 0.24);   // turn toward the door and walk up to it
-      const open = smooth((t - 0.6) / 0.2);     // the doors swing open
-      const through = smooth((t - 0.78) / 0.22); // and you step through
-      // Stay solid until the next room has fully appeared over you, so nothing washes out.
+      const turn = smooth((t - 0.2) / 0.34);    // pan along the wall until the door is in front of you
+      const near = smooth((t - 0.5) / 0.14);    // walk up to it
+      const open = smooth((t - 0.62) / 0.18);   // the doors swing open
+      const through = smooth((t - 0.78) / 0.22); // and you step through, into the next room
       const leave = i === n - 1 ? 1 : 1 - smooth((t - 0.97) / 0.03);
       const o = Math.min(arrive, leave);
 
       const tx = (vw / 2 - sc.cx) * turn;
-      const ty = (vh / 2 - sc.cy) * turn;
-      const s = (1.12 - 0.12 * arrive) * (1 + 0.42 * turn) * (1 + 3 * through);
+      const ty = (vh / 2 - sc.cy) * 0.55 * turn;
+      const s = (1.12 - 0.12 * arrive) * (1 + 0.3 * near) * (1 + 3 * through);
       // A slight swing of the head as you turn toward the door.
       const dir = sc.el.dataset.door === "left" ? -1 : 1;
       const swing = -dir * 9 * Math.sin(Math.PI * turn);
       sc.el.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) rotateY(${swing.toFixed(2)}deg) scale(${s.toFixed(4)})`;
       sc.el.style.opacity = o.toFixed(3);
       sc.el.classList.toggle("is-live", o > 0.001);
-      sc.el.classList.toggle("is-info", t > -0.08 && t < 0.4);
+      sc.el.classList.toggle("is-info", t > -0.08 && t < 0.45);
       if (sc.seal && t > -0.08 && !sc.seal.classList.contains("is-drawn")) {
         sc.seal.classList.add("is-drawn");
         setTimeout(() => sc.seal.classList.add("is-parted"), 2600);
