@@ -60,24 +60,6 @@
     });
   });
 
-  // A Mughal cusped arch: lobes around a half-ellipse, meeting in a cusp at the crown.
-  function lobedArch(cx, bottom, spring, hw, rise, lobes, close) {
-    const pt = (k) => {
-      const phi = Math.PI - (k * Math.PI) / lobes;
-      return [cx + hw * Math.cos(phi), spring - rise * Math.sin(phi)];
-    };
-    let d = `M${cx - hw} ${bottom}L${cx - hw} ${spring}`;
-    let prev = pt(0);
-    for (let k = 1; k <= lobes; k++) {
-      const p = pt(k);
-      const r = Math.hypot(p[0] - prev[0], p[1] - prev[1]) * 0.62;
-      d += `A${r.toFixed(2)} ${r.toFixed(2)} 0 0 1 ${p[0].toFixed(2)} ${p[1].toFixed(2)}`;
-      prev = p;
-    }
-    d += `L${cx + hw} ${bottom}`;
-    return close ? d + "Z" : d;
-  }
-
   /* ---------- The gate ---------- */
 
   const gate = $("#gate");
@@ -90,8 +72,9 @@
     // The hero's seal is engraved as the forecourt comes into view.
     setTimeout(() => heroArch.classList.add("is-drawn"), 1600);
     setTimeout(() => heroArch.classList.add("is-parted"), 4600);
-    setTimeout(() => body.classList.remove("is-gate"), 1400);
-    setTimeout(() => body.classList.add("is-in"), 2800);
+    setTimeout(() => body.classList.add("is-walking"), 1900);
+    setTimeout(() => body.classList.remove("is-gate"), 2400);
+    setTimeout(() => body.classList.add("is-in"), 4200);
   }
   if (reduceMotion) {
     gate.classList.add("is-drawn", "is-parted");
@@ -112,135 +95,69 @@
     window.addEventListener("keydown", (e) => { if (body.classList.contains("is-gate") && (e.key === "Enter" || e.key === " " || e.key === "Escape")) enter(); });
   }
 
-  /* ---------- The corridor: walls of pattern, each arch closed by a pair of doors ---------- */
-
-  const PATTERNS = { // brand-kit tiles: file, tile width, tile height
-    dam: ["damask-maroon", 240, 280],
-    har: ["harlequin", 240, 220],
-    vin: ["vine-green", 195, 225],
-    chk: ["checker-bloom", 180, 180],
-    lat: ["arch-lattice", 240, 240],
-  };
-  const WALLS = [
-    { p: "dam", door: "#1F3A2E" },
-    { p: "har", door: "#5C1A1B" },
-    { p: "vin", door: "#5C1A1B" },
-    { p: "chk", door: "#5C1A1B" },
-    { p: "lat", door: "#1F3A2E" },
-  ];
-  const K = 2.4;      // how much smaller each arch looks than the one in front of it
-  const START = -0.9; // the walk begins just short of the first doors
+  /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
   const corridor = $("#tour");
-  const wallsEl = $("#walls");
-  const sanctum = $("#sanctum");
-  const captions = $$("#captions .caption");
+  const scenes = $$(".scene", corridor).map((el) => ({
+    el,
+    door: $(".doorway", el),
+    leaves: $$(".leaf", el),
+    seal: $(".scene__seal", el),
+    cx: 0,
+    cy: 0,
+  }));
+  const flash = $("#corridorFlash");
   const hint = $("#corridorHint");
-  let walls = [], vw = 0, builtH = 0;
 
-  const defs = document.createElementNS(NS, "svg");
-  defs.setAttribute("width", "0");
-  defs.setAttribute("height", "0");
-  defs.style.position = "absolute";
-  defs.innerHTML = "<defs>" + Object.entries(PATTERNS).map(([id, [file, w, h]]) =>
-    `<pattern id="p-${id}" width="${w}" height="${h}" patternUnits="userSpaceOnUse"><image href="assets/patterns/${file}.svg" width="${w}" height="${h}"/></pattern>`
-  ).join("") + "</defs>";
-  wallsEl.appendChild(defs);
-
-  function buildWalls() {
-    walls.forEach((w) => w.wrap.remove());
-    vw = wallsEl.clientWidth;
-    const vh = wallsEl.clientHeight;
-    builtH = vh;
-    const narrow = vw < 700;
-    const hw = narrow ? Math.min(vw * 0.4, vh * 0.21) : Math.min(vw * 0.2, vh * 0.25);
-    const rise = hw * 1.2;
-    const spring = vh - hw * (narrow ? 1.7 : 1.5);
-    const ox = vw / 2, oy = spring;
-    const bottom = vh + 2;
-    const top = spring - rise * 1.18;
-    const big = `M${-vw * 3} ${-vh * 3}H${vw * 4}V${vh * 4}H${-vw * 3}Z`;
-    const hole = lobedArch(ox, bottom, spring, hw, rise, 8, true);
-    const frame = lobedArch(ox, bottom, spring, hw * 1.13, rise * 1.13, 8);
-    sanctum.style.setProperty("--ox", ox + "px");
-    sanctum.style.setProperty("--oy", oy + "px");
-
-    // Door faces: inlaid arch, lower panels, the meeting stile and two brass rings.
-    const inlay = lobedArch(ox, vh - hw * 0.95, spring + hw * 0.1, hw * 0.8, rise * 0.78, 8);
-    const panel = (x) => `<rect x="${x}" y="${vh - hw * 0.8}" width="${hw * 0.62}" height="${hw * 0.55}"/>`;
-    const doorFace = (fill) => `
-      <path d="${hole}" fill="${fill}"/>
-      <g fill="none" stroke="#C9A56B" stroke-width="1.4">
-        <path d="${inlay}"/>${panel(ox - hw * 0.76)}${panel(ox + hw * 0.14)}
-        <line x1="${ox}" y1="${top}" x2="${ox}" y2="${bottom}" stroke-width="2.4"/>
-        <circle cx="${ox - hw * 0.1}" cy="${spring + hw * 0.55}" r="${hw * 0.045}" stroke-width="2"/>
-        <circle cx="${ox + hw * 0.1}" cy="${spring + hw * 0.55}" r="${hw * 0.045}" stroke-width="2"/>
-      </g>
-      <path class="fog" d="${hole}" fill="#140c0a" opacity="0"/>`;
-
-    walls = WALLS.map((w, i) => {
-      const wrap = document.createElement("div");
-      wrap.className = "wallwrap";
-      wrap.style.setProperty("--ox", ox + "px");
-      wrap.style.setProperty("--oy", oy + "px");
-      wrap.style.zIndex = String(10 - i);
-
-      const wall = document.createElementNS(NS, "svg");
-      wall.setAttribute("class", "wall");
-      wall.setAttribute("viewBox", `0 0 ${vw} ${vh}`);
-      wall.innerHTML = `
-        <path d="${big} ${hole}" fill="url(#p-${w.p})" fill-rule="evenodd"/>
-        <path d="${frame}" fill="none" stroke="#C9A56B" stroke-width="1.4"/>
-        <path d="${hole}" fill="none" stroke="#C9A56B" stroke-width="3"/>
-        <path class="fog" d="${big} ${hole}" fill="#140c0a" fill-rule="evenodd" opacity="0"/>`;
-      wrap.appendChild(wall);
-
-      const leaves = ["l", "r"].map((side) => {
-        const d = document.createElementNS(NS, "svg");
-        d.setAttribute("class", `wdoor wdoor--${side}`);
-        d.setAttribute("viewBox", `${side === "l" ? ox - hw : ox} ${top} ${hw} ${bottom - top}`);
-        d.setAttribute("preserveAspectRatio", "none");
-        Object.assign(d.style, { left: (side === "l" ? ox - hw : ox) + "px", top: top + "px", width: hw + "px", height: bottom - top + "px" });
-        d.innerHTML = doorFace(w.door);
-        wrap.appendChild(d);
-        return d;
-      });
-
-      wallsEl.appendChild(wrap);
-      return { wrap, leaves, fogs: $$(".fog", wrap) };
+  function measureCorridor() {
+    scenes.forEach((sc) => {
+      sc.cx = sc.door.offsetLeft + sc.door.offsetWidth / 2;
+      sc.cy = sc.door.offsetTop + sc.door.offsetHeight / 2;
+      sc.el.style.transformOrigin = `${sc.cx}px ${sc.cy}px`;
     });
-    renderCorridor();
   }
 
   function renderCorridor() {
-    if (!walls.length) return;
     const r = corridor.getBoundingClientRect();
-    const vh = window.innerHeight;
+    const vh = window.innerHeight, vw = window.innerWidth;
     if (r.bottom < -vh || r.top > vh * 2) return;
     const p = clamp(-r.top / (r.height - vh), 0, 1);
-    const n = WALLS.length;
-    const cam = START + clamp(p / 0.92, 0, 1) * (n - START);
-    const persp = Math.round(vw * 1.1);
+    const n = scenes.length;
+    const cam = clamp(p / 0.97, 0, 1) * n;
 
-    walls.forEach((w, i) => {
-      const d = i - cam;
-      const s = Math.pow(K, -d);
-      const o = d > -0.3 ? 1 : clamp(1 - (-0.3 - d) / 0.55, 0, 1);
-      w.wrap.style.transform = `scale(${s.toFixed(4)})`;
-      w.wrap.style.opacity = o.toFixed(3);
-      w.wrap.style.visibility = o === 0 ? "hidden" : "visible";
-      // The doors swing open as you draw near, then you step through.
-      const a = reduceMotion ? 110 : 110 * smooth((cam - (i - 0.85)) / 0.6);
-      w.leaves[0].style.transform = `perspective(${persp}px) rotateY(${(-a).toFixed(2)}deg)`;
-      w.leaves[1].style.transform = `perspective(${persp}px) rotateY(${a.toFixed(2)}deg)`;
-      const fog = clamp(d * 0.3, 0, 0.78) + (a / 110) * 0.25 * (d > 0 ? 1 : 0);
-      w.fogs.forEach((f) => f.setAttribute("opacity", fog.toFixed(3)));
+    scenes.forEach((sc, i) => {
+      const t = cam - i;
+      const arrive = i === 0 ? 1 : smooth((t + 0.07) / 0.09); // the next room appears out of the light
+      const turn = smooth((t - 0.36) / 0.24);   // turn toward the door and walk up to it
+      const open = smooth((t - 0.6) / 0.2);     // the doors swing open
+      const through = smooth((t - 0.8) / 0.2);  // and you step through, into the light
+      const leave = i === n - 1 ? 1 : 1 - smooth((t - 0.93) / 0.07);
+      const o = Math.min(arrive, leave);
+
+      const tx = (vw / 2 - sc.cx) * turn;
+      const ty = (vh / 2 - sc.cy) * turn;
+      const s = (1.12 - 0.12 * arrive) * (1 + 0.42 * turn) * (1 + 5 * through);
+      // A slight swing of the head as you turn toward the door.
+      const dir = sc.el.dataset.door === "left" ? -1 : 1;
+      const swing = -dir * 9 * Math.sin(Math.PI * turn);
+      sc.el.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) rotateY(${swing.toFixed(2)}deg) scale(${s.toFixed(4)})`;
+      sc.el.style.opacity = o.toFixed(3);
+      sc.el.classList.toggle("is-live", o > 0.001);
+      sc.el.classList.toggle("is-info", t > -0.08 && t < 0.4);
+      if (sc.seal && t > -0.08 && !sc.seal.classList.contains("is-drawn")) {
+        sc.seal.classList.add("is-drawn");
+        setTimeout(() => sc.seal.classList.add("is-parted"), 2600);
+      }
+
+      const a = 106 * open;
+      sc.leaves[0].style.transform = `rotateY(${(-a).toFixed(2)}deg)`;
+      sc.leaves[1].style.transform = `rotateY(${a.toFixed(2)}deg)`;
+      sc.leaves.forEach((l) => { l.style.filter = `brightness(${(1 - 0.4 * open).toFixed(3)})`; });
+
+      if (i === n - 1) flash.style.opacity = smooth((t - 0.84) / 0.12).toFixed(3);
     });
-    sanctum.style.transform = `scale(${Math.pow(K, -(n - cam)).toFixed(4)})`;
 
-    const active = cam > n - 0.45 ? -1 : clamp(Math.floor(cam + 0.9), 0, n - 1);
-    captions.forEach((c, i) => c.classList.toggle("is-on", i === active));
-    hint.style.opacity = p < 0.03 ? "1" : "0";
+    hint.style.opacity = p < 0.02 ? "1" : "0";
   }
 
   /* ---------- Reveal on scroll ---------- */
@@ -373,19 +290,12 @@
     ticking = false;
   }
   window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  let resizeTimer, lastW = window.innerWidth;
+  let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      // Phones resize the viewport as the address bar slides; only rebuild on a real change.
-      if (Math.abs(window.innerWidth - lastW) > 40 || Math.abs(wallsEl.clientHeight - builtH) > 120) {
-        lastW = window.innerWidth;
-        buildWalls();
-      }
-      onScroll();
-    }, 150);
+    resizeTimer = setTimeout(() => { measureCorridor(); onScroll(); }, 150);
   });
-  buildWalls();
+  measureCorridor();
   onScroll();
 
   /* ---------- The enquiry ---------- */

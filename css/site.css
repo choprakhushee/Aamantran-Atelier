@@ -151,48 +151,56 @@ strong { font-weight: 500; }
 .tag b { font: 400 clamp(22px, 2.2vw, 30px)/1.15 var(--display); letter-spacing: .12em; text-transform: uppercase; }
 .tag span { max-width: 26em; font-size: 16px; line-height: 1.5; color: var(--cocoa); }
 
-/* ---------- The gate: two palace doors that swing toward you ---------- */
+/* ---------- The gate: a palace wall, carved doors that swing open, and you walk through ---------- */
 
-.gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; perspective: 1800px; }
+.gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; overflow: hidden; }
+.gate__scene {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  transition: transform 2.2s cubic-bezier(.55, 0, .45, 1), opacity 1.4s var(--ease);
+}
+.gate__wall {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0) 30%, rgba(20, 8, 6, .62) 100%),
+    var(--p-damask);
+  background-color: var(--maroon);
+}
+.gate__doorway {
+  --h: min(86svh, 1300px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--h) * .472);
+  height: var(--h);
+  transform: translate(-50%, -50%);
+  perspective: 1600px;
+  filter: drop-shadow(0 30px 50px rgba(10, 4, 3, .6)) drop-shadow(0 0 1px var(--gold));
+}
 .gate__leaf {
   position: absolute;
   top: 0;
-  bottom: 0;
-  width: 50.1%;
-  padding: clamp(18px, 3vw, 44px);
-  background: var(--maroon);
+  width: 50%;
+  height: 100%;
+  object-fit: fill;
   transition: transform 2s var(--ease), filter 2s var(--ease);
 }
-.gate__leaf--l { left: 0; transform-origin: 0 50%; box-shadow: inset -2px 0 0 var(--gold); }
-.gate__leaf--r { right: 0; transform-origin: 100% 50%; box-shadow: inset 2px 0 0 var(--gold); }
-/* Inlaid panels with a gold hairline, as on a carved door. */
-.gate__panel {
-  height: 100%;
-  border: 1px solid rgba(201, 165, 107, .55);
-  padding: 14px;
-  display: grid;
-  grid-template-rows: 2.2fr 1fr;
-  gap: 14px;
-}
-.gate__panel::before, .gate__panel::after {
-  content: "";
-  border: 1px solid rgba(201, 165, 107, .4);
-  background: var(--maroon-deep);
-}
-.gate__panel::before { border-radius: 50% 50% 0 0 / 18% 18% 0 0; }
-/* Brass ring pulls */
-.gate__leaf::after {
-  content: "";
+.gate__leaf--l { left: 0; transform-origin: 0 50%; }
+.gate__leaf--r { right: 0; transform-origin: 100% 50%; }
+.gate__lantern {
   position: absolute;
-  top: 50%;
-  width: 26px;
-  height: 26px;
-  margin-top: -13px;
-  border: 2px solid var(--gold);
-  border-radius: 50%;
+  top: -2px;
+  height: min(42svh, 460px);
+  width: auto;
+  transform-origin: 50% 0;
+  animation: sway 4.5s var(--ease) infinite alternate;
+  filter: drop-shadow(0 0 30px rgba(255, 196, 110, .45));
 }
-.gate__leaf--l::after { right: 22px; }
-.gate__leaf--r::after { left: 22px; }
+.gate__lantern--l { right: calc(50% + min(86svh, 1300px) * .236 + 6vw); }
+.gate__lantern--r { left: calc(50% + min(86svh, 1300px) * .236 + 6vw); animation-delay: -2s; animation-duration: 5s; }
+@media (max-width: 700px) { .gate__lantern { height: 26svh; } .gate__lantern--l { right: auto; left: 2vw; } .gate__lantern--r { left: auto; right: 2vw; } }
 
 .gate__crest {
   position: absolute;
@@ -202,20 +210,21 @@ strong { font-weight: 500; }
   transform: translate(-50%, -54%);
   display: grid;
   justify-items: center;
-  width: min(84vw, 520px);
-  padding: 40px 30px 44px;
+  width: min(80vw, 440px);
+  padding: 36px 26px 40px;
   background: var(--maroon);
   border: 1px solid rgba(201, 165, 107, .7);
   outline: 1px solid rgba(201, 165, 107, .35);
   outline-offset: 6px;
+  box-shadow: var(--shadow-tag);
   text-align: center;
   color: var(--linen);
   transition: opacity 1.2s var(--ease), transform 1.4s var(--ease);
 }
-.gate__chhatri { width: clamp(100px, 16vh, 160px); }
+.gate__chhatri { width: clamp(90px, 14vh, 150px); }
 .gate__word {
-  margin: 30px 0 0;
-  font: 400 clamp(32px, 6vw, 60px)/1 var(--display);
+  margin: 26px 0 0;
+  font: 400 clamp(28px, 5vw, 52px)/1 var(--display);
   letter-spacing: .2em;
   padding-left: .2em;
   opacity: 0;
@@ -223,8 +232,8 @@ strong { font-weight: 500; }
   transition: opacity 1.4s var(--ease) 1.4s, transform 1.4s var(--ease) 1.4s;
 }
 .gate__desc {
-  margin: 16px 0 0;
-  font: 400 clamp(12px, 2vw, 20px)/1 var(--display);
+  margin: 14px 0 0;
+  font: 400 clamp(12px, 1.8vw, 18px)/1 var(--display);
   letter-spacing: .5em;
   padding-left: .5em;
   color: var(--gold);
@@ -235,7 +244,7 @@ strong { font-weight: 500; }
   position: absolute;
   z-index: 2;
   left: 50%;
-  bottom: 30px;
+  bottom: 22px;
   margin: 0;
   padding: 8px 14px;
   transform: translateX(-50%);
@@ -249,8 +258,10 @@ strong { font-weight: 500; }
 body.is-drawing .gate__word, body.is-drawing .gate__desc { opacity: 1; transform: none; }
 body.is-entering .gate__crest { opacity: 0; transform: translate(-50%, -54%) scale(.94); }
 body.is-entering .gate__skip { opacity: 0; }
-body.is-entering .gate__leaf--l { transform: rotateY(-108deg); filter: brightness(.55); transition-delay: .6s; }
-body.is-entering .gate__leaf--r { transform: rotateY(108deg); filter: brightness(.55); transition-delay: .6s; }
+body.is-entering .gate__leaf--l { transform: rotateY(-104deg); filter: brightness(.6); transition-delay: .5s; }
+body.is-entering .gate__leaf--r { transform: rotateY(104deg); filter: brightness(.6); transition-delay: .5s; }
+/* Then step through the doorway, into the light. */
+body.is-walking .gate__scene { transform: scale(6); opacity: 0; transition-delay: 0s, .7s; }
 body.is-in .gate { display: none; }
 
 /* The chhatri drawing (brand kit: chhatri-line-gold) */
@@ -477,50 +488,110 @@ body.is-entering .write--2 { animation-delay: 2.7s; }
 body.is-entering .in-2 { opacity: 1; transform: none; transition-delay: 3.3s; }
 body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 
-/* ---------- The corridor: arches whose doors open as you walk ---------- */
+/* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
-.corridor { position: relative; height: 760vh; background: #140c0a; }
-.corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-.corridor__walls { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.wallwrap {
+.corridor { position: relative; height: 640vh; background: #140c0a; }
+.corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1400px; }
+
+.scene {
   position: absolute;
   inset: 0;
-  transform-origin: var(--ox) var(--oy);
+  opacity: 0;
+  visibility: hidden;
   will-change: transform, opacity;
 }
-.wall { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.wdoor { position: absolute; overflow: visible; will-change: transform; }
-.wdoor--l { transform-origin: 0 50%; }
-.wdoor--r { transform-origin: 100% 50%; }
-.sanctum {
+.scene.is-live { visibility: visible; }
+.scene__wall { position: absolute; inset: -45%; }
+.scene--parlour .scene__wall, .scene--niche .scene__wall { inset: -20%; }
+.scene--damask .scene__wall { background: radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0) 35%, rgba(20, 8, 6, .55) 100%), var(--p-damask); background-color: var(--maroon); }
+.scene--parlour .scene__wall { background: linear-gradient(rgba(20, 8, 6, .18), rgba(20, 8, 6, .28)), url("../assets/art/parlour.webp") center / cover; }
+.scene--harlequin .scene__wall { background: radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0) 40%, rgba(20, 8, 6, .45) 100%), var(--p-harlequin); }
+.scene--niche .scene__wall { background: url("../assets/art/niche.webp") center 40% / cover; }
+
+.scene__info {
   position: absolute;
-  inset: -200%;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 22px;
-  background: radial-gradient(70vmax 70vmax at 50% 50%, #fff7ec, var(--linen) 40%, var(--blush) 100%);
-  transform-origin: calc(40% + var(--ox, 10%)) calc(40% + var(--oy, 14%));
+  top: 50%;
+  width: min(36vw, 480px);
+  padding: 34px 34px 36px;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 1.2s var(--ease), margin 1.2s var(--ease);
+  margin-top: 24px;
+}
+.scene.is-info .scene__info { opacity: 1; margin-top: 0; }
+.scene[data-door="right"] .scene__info { left: 9vw; }
+.scene[data-door="left"] .scene__info { right: 9vw; }
+.scene__info span { font-size: 17px; }
+.scene__seal { width: 92px; margin-bottom: 6px; padding: 12px 16px 8px; background: var(--maroon); }
+.scene__names { margin: 6px 0 2px; font: 400 clamp(46px, 4.6vw, 70px)/1.1 var(--script); color: var(--maroon); }
+.scene__names i { font-style: normal; font-size: .6em; }
+.scene__swatches { display: flex; gap: 14px; margin: 14px 0 0; padding: 0; list-style: none; }
+.scene__swatches li { display: grid; justify-items: center; gap: 8px; font: 400 10px/1 var(--text); letter-spacing: .2em; text-transform: uppercase; color: var(--cocoa); }
+.sw { width: 58px; height: 72px; box-shadow: 0 0 0 1px var(--hairline); }
+.sw--buti { background: var(--p-buti); background-color: var(--linen); background-size: 75px 86px; }
+.sw--vine { background: var(--p-vine); background-size: 100px 115px; }
+.sw--lattice { background: var(--p-lattice); background-size: 120px 120px; }
+.sw--damask { background: var(--p-damask); background-color: var(--maroon); background-size: 120px 140px; }
+.scene__steps { margin: 14px 0 0; font: 400 11px/1.6 var(--text); letter-spacing: .24em; text-transform: uppercase; color: var(--ink); }
+.scene__steps i { font-style: normal; color: var(--gold); margin: 0 6px; font-size: 9px; }
+
+/* An illustrated doorway: light behind, two carved leaves in front. */
+.doorway {
+  --h: min(70svh, 760px);
+  position: absolute;
+  top: calc(50% - var(--h) / 2 + 2svh);
+  width: calc(var(--h) * .472);
+  height: var(--h);
+  perspective: 1500px;
+  filter: drop-shadow(0 26px 34px rgba(10, 4, 3, .55));
+}
+.scene[data-door="right"] .doorway { right: 12vw; }
+.scene[data-door="left"] .doorway { left: 12vw; }
+.doorway::after {
+  content: "";
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  bottom: -3%;
+  height: 6%;
+  background: radial-gradient(closest-side, rgba(10, 4, 3, .5), transparent);
+  z-index: -1;
+}
+.doorway__light, .gate__light {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 62%, #fffaf0, #f7deae 40%, #d9a463 100%);
+  -webkit-mask: url("../assets/art/door-l.webp") left top / 51% 100% no-repeat, url("../assets/art/door-r.webp") right top / 51% 100% no-repeat;
+  mask: url("../assets/art/door-l.webp") left top / 51% 100% no-repeat, url("../assets/art/door-r.webp") right top / 51% 100% no-repeat;
+}
+.leaf {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  object-fit: fill;
   will-change: transform;
 }
-.sanctum__a { width: clamp(90px, 12vw, 160px); }
-.sanctum p { margin: 0; font: 400 clamp(40px, 5vw, 72px)/1 var(--script); color: var(--maroon); }
+.leaf--l { left: 0; transform-origin: 0 50%; }
+.leaf--r { right: 0; transform-origin: 100% 50%; }
 
-.corridor__captions { position: absolute; z-index: 2; left: 0; right: 0; top: 96px; display: grid; justify-items: center; pointer-events: none; }
-.caption {
-  grid-area: 1 / 1;
-  width: min(90vw, 540px);
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 1s var(--ease), transform 1.2s var(--ease);
+.corridor__flash { position: absolute; inset: 0; z-index: 3; background: radial-gradient(circle at 50% 55%, #fffaf0, #f7deae 60%, #e3b57a); opacity: 0; pointer-events: none; }
+.scene__lantern {
+  position: absolute;
+  top: -3vh;
+  right: calc(12vw + min(70svh, 760px) * .472 + 4vw);
+  height: min(44svh, 470px);
+  width: auto;
+  transform-origin: 50% 0;
+  animation: sway 5s var(--ease) infinite alternate;
+  filter: drop-shadow(0 0 40px rgba(255, 196, 110, .5));
 }
-.caption.is-on { opacity: 1; transform: none; }
 .corridor__hint {
   position: absolute;
-  z-index: 2;
+  z-index: 5;
   left: 0;
   right: 0;
-  bottom: 28px;
+  bottom: 22px;
   width: max-content;
   margin: 0 auto;
   padding: 10px 16px 12px;
@@ -541,10 +612,19 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   background: linear-gradient(var(--gold), transparent);
   animation: hint 2.4s var(--ease) infinite;
 }
-@media (max-width: 700px) {
-  .corridor__captions { top: 80px; }
-  .caption { padding: 16px 18px 18px; }
-  .caption span { font-size: 15px; }
+
+@media (max-width: 760px) {
+  .scene__info { top: 76px; left: 16px !important; right: 16px !important; width: auto; padding: 20px 20px 22px; transform: none; }
+  .scene__info span { font-size: 15px; }
+  .scene__info b { font-size: 21px; }
+  .scene__seal { width: 64px; padding: 8px 10px 4px; }
+  .scene__names { font-size: 40px; }
+  .sw { width: 44px; height: 54px; }
+  .scene__swatches { gap: 10px; }
+  .doorway { --h: min(46svh, 420px); top: auto; bottom: 5svh; }
+  .scene[data-door="right"] .doorway { right: 10vw; }
+  .scene[data-door="left"] .doorway { left: 10vw; }
+  .scene__lantern { display: none; }
 }
 
 /* ---------- The Darbar (the one bottle-green band) ---------- */
@@ -557,6 +637,17 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   overflow: hidden;
 }
 .darbar__sprig { position: absolute; right: -2vw; bottom: -4vw; width: clamp(180px, 26vw, 420px); pointer-events: none; }
+.darbar__lanterns { position: absolute; top: 0; right: 7vw; display: flex; align-items: flex-start; gap: 2.4vw; pointer-events: none; }
+.darbar__lanterns img {
+  width: auto;
+  transform-origin: 50% 0;
+  animation: sway 5s var(--ease) infinite alternate;
+  filter: drop-shadow(0 0 36px rgba(255, 196, 110, .45));
+}
+.darbar__lanterns img:nth-child(1) { height: clamp(220px, 34vw, 520px); }
+.darbar__lanterns img:nth-child(2) { height: clamp(170px, 24vw, 380px); animation-delay: -1.8s; animation-duration: 6s; }
+.darbar__lanterns img:nth-child(3) { height: clamp(250px, 40vw, 600px); animation-delay: -3.2s; animation-duration: 5.4s; }
+@media (max-width: 1000px) { .darbar__lanterns { opacity: .35; right: 2vw; } }
 .darbar__dev { margin: 0; font: 400 clamp(80px, 13vw, 200px)/1.15 var(--dev); color: var(--gold); }
 .darbar__title {
   position: relative;
@@ -982,7 +1073,14 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 
 .endcard { background: var(--maroon); color: var(--linen); text-align: center; }
 .endcard__band { height: 64px; background: url("../assets/patterns/harlequin.svg") 0 0 / 70px 64px; border-bottom: 3px solid var(--gold); }
-.endcard__body { display: grid; justify-items: center; padding: clamp(80px, 10vw, 150px) var(--gutter) clamp(70px, 8vw, 110px); }
+.endcard__body {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-height: min(100svh, 1100px);
+  padding: clamp(80px, 10vw, 150px) var(--gutter) clamp(140px, 16vw, 240px);
+  background: url("../assets/art/niche.webp") center 30% / cover;
+}
 .bloom-a--end { width: clamp(110px, 13vw, 190px); }
 .endcard__quote { max-width: 15em; margin: 46px 0 0; font: 400 clamp(36px, 4.6vw, 70px)/1.2 var(--script); }
 .endcard__word { margin: 56px 0 0; font: 400 clamp(26px, 3vw, 40px)/1 var(--display); letter-spacing: .2em; padding-left: .2em; }

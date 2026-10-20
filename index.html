@@ -22,8 +22,16 @@
   <!-- ===================== THE GATE =====================
        The Engraving: gold lines draw the chhatri, then its doors part. -->
   <div class="gate" id="gate" aria-hidden="true">
-    <div class="gate__leaf gate__leaf--l"><div class="gate__panel"></div></div>
-    <div class="gate__leaf gate__leaf--r"><div class="gate__panel"></div></div>
+    <div class="gate__scene">
+      <div class="gate__wall"></div>
+      <div class="gate__doorway">
+        <div class="gate__light"></div>
+        <img class="gate__leaf gate__leaf--l" src="assets/art/door-l.webp" alt="">
+        <img class="gate__leaf gate__leaf--r" src="assets/art/door-r.webp" alt="">
+      </div>
+      <img class="gate__lantern gate__lantern--l" src="assets/art/lantern-1.webp" alt="">
+      <img class="gate__lantern gate__lantern--r" src="assets/art/lantern-3.webp" alt="">
+    </div>
     <div class="gate__crest">
       <div class="gate__chhatri" data-chhatri></div>
       <p class="gate__word">AAMANTRAN</p>
@@ -93,22 +101,63 @@
     </section>
 
     <!-- ===================== THE CORRIDOR =====================
-         Scroll walks you through a run of cusped arches, each wall in a parlour pattern. -->
+         Four rooms. In each, you take in what's there, turn to its door, the doors swing
+         open and you step through — the next door is always on the other side. -->
     <section class="corridor room" id="tour" data-tone="dark" aria-label="A tour through the atelier">
-      <div class="corridor__sticky">
-        <div class="corridor__walls" id="walls" aria-hidden="true">
-          <div class="sanctum" id="sanctum">
-            <img class="sanctum__a" src="assets/logos/a-emblem-deep.webp" alt="" width="200" height="195">
-            <p>Welcome in.</p>
+      <div class="corridor__sticky" id="corridorStage">
+
+        <div class="scene scene--damask" data-door="right">
+          <div class="scene__wall"></div>
+          <img class="scene__lantern" src="assets/art/lantern-2.webp" alt="" aria-hidden="true">
+          <div class="tag scene__info">
+            <div class="scene__seal" data-chhatri></div>
+            <small>I · The gate</small>
+            <b>Every invitation has a reveal</b>
+            <span>Your guests tap a seal, gold lines engrave a chhatri, and its doors part to let them in.</span>
           </div>
+          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
         </div>
-        <div class="corridor__captions" id="captions">
-          <div class="tag caption"><small>The grand tour</small><b>Step inside</b><span>Every invitation we make opens room by room. Walk with us.</span></div>
-          <div class="tag caption"><small>I · The gate</small><b>Every invite has a reveal</b><span>Gold lines engrave a chhatri, and its doors part for your guests.</span></div>
-          <div class="tag caption"><small>II · The Darbar</small><b>Your names, the hero</b><span>Written in a flowing hand, never smaller than our own.</span></div>
-          <div class="tag caption"><small>III · The parlour</small><b>A room for every function</b><span>Haldi, mehendi, sangeet and the pheras — each on its own pattern.</span></div>
-          <div class="tag caption"><small>IV · The atelier</small><b>Made with patience</b><span>Sketched, storyboarded, set to music and set in motion.</span></div>
+
+        <div class="scene scene--parlour" data-door="left">
+          <div class="scene__wall"></div>
+          <div class="tag scene__info">
+            <small>II · The Darbar</small>
+            <b>Your names are the hero</b>
+            <p class="scene__names">Ananya <i>&amp;</i> Kabir</p>
+            <span>Written in a flowing hand, and always larger than any logo — ours included.</span>
+          </div>
+          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
         </div>
+
+        <div class="scene scene--harlequin" data-door="right">
+          <div class="scene__wall"></div>
+          <img class="scene__lantern" src="assets/art/lantern-3.webp" alt="" aria-hidden="true">
+          <div class="tag scene__info">
+            <small>III · The parlour</small>
+            <b>A room for every function</b>
+            <span>Each event arrives on its own pattern, with its own date, venue and map.</span>
+            <ul class="scene__swatches">
+              <li><i class="sw sw--buti"></i>Haldi</li>
+              <li><i class="sw sw--vine"></i>Mehendi</li>
+              <li><i class="sw sw--lattice"></i>Sangeet</li>
+              <li><i class="sw sw--damask"></i>Wedding</li>
+            </ul>
+          </div>
+          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
+        </div>
+
+        <div class="scene scene--niche" data-door="left">
+          <div class="scene__wall"></div>
+          <div class="tag scene__info">
+            <small>IV · The atelier</small>
+            <b>Made with patience</b>
+            <span>Every reveal is storyboarded and timed to your music before a single frame moves.</span>
+            <p class="scene__steps">Sketch <i>◆</i> Storyboard <i>◆</i> Motion <i>◆</i> Reveal</p>
+          </div>
+          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
+        </div>
+
+        <div class="corridor__flash" id="corridorFlash" aria-hidden="true"></div>
         <p class="corridor__hint" id="corridorHint">Scroll to walk in</p>
       </div>
     </section>
@@ -116,6 +165,11 @@
     <!-- ===================== THE DARBAR (the one bottle-green band) ===================== -->
     <section class="darbar room" id="darbar" data-tone="dark">
       <img class="darbar__sprig" src="assets/motifs/vine-sprig.svg" alt="" width="300" height="380" aria-hidden="true">
+      <div class="darbar__lanterns" aria-hidden="true">
+        <img src="assets/art/lantern-1.webp" alt="">
+        <img src="assets/art/lantern-2.webp" alt="">
+        <img src="assets/art/lantern-3.webp" alt="">
+      </div>
       <p class="eyebrow eyebrow--gold reveal">01 — The Darbar</p>
       <p class="darbar__dev reveal" lang="hi">आमंत्रण</p>
       <h2 class="darbar__title reveal">An invitation is the first scene of a family’s story.</h2>
