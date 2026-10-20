@@ -14,20 +14,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/logos/a-emblem-gold.webp">
-  <link rel="stylesheet" href="css/site.css?v=4">
+  <link rel="preload" as="image" href="assets/art/entrance.webp">
+  <link rel="apple-touch-icon" href="assets/logos/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/site.css?v=6">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Aamantran Atelier","description":"Moving video invitations and wedding websites for Indian weddings.","email":"aamantranatelier@gmail.com","areaServed":"IN","sameAs":["https://www.instagram.com/aamantran.atelier/"],"image":"https://choprakhushee.github.io/Aamantran-Atelier/assets/og.jpg"}</script>
 </head>
 <body class="is-gate">
 
   <!-- ===================== THE GATE =====================
        The Engraving: gold lines draw the chhatri, then its doors part. -->
   <div class="gate" id="gate" aria-hidden="true">
-    <div class="gate__leaf gate__leaf--l"><div class="gate__panel"></div></div>
-    <div class="gate__leaf gate__leaf--r"><div class="gate__panel"></div></div>
-    <div class="gate__crest">
-      <div class="gate__chhatri" data-chhatri></div>
-      <p class="gate__word">AAMANTRAN</p>
-      <p class="gate__desc">· ATELIER ·</p>
+    <div class="gate__scene" id="gateScene">
+      <img class="gate__bg" id="gateBg" src="assets/art/entrance.webp" alt="">
+      <!-- The painted doors are covered by these two leaves, which really open. -->
+      <div class="gate__doorway" id="gateDoor">
+        <div class="gate__view"></div>
+        <img class="gate__leaf gate__leaf--l" src="assets/art/gate-door-l.webp" alt="">
+        <img class="gate__leaf gate__leaf--r" src="assets/art/gate-door-r.webp" alt="">
+        <span class="gate__seam"></span>
+      </div>
     </div>
     <p class="gate__skip">Tap to enter</p>
   </div>
@@ -107,7 +112,7 @@
             <b>Every invitation has a reveal</b>
             <span>Your guests tap a seal, gold lines engrave a chhatri, and its doors part to let them in.</span>
           </div>
-          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
+          <div class="doorway doorway--green"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt=""></div>
         </div>
 
         <div class="scene scene--parlour" data-door="left">
@@ -146,7 +151,7 @@
             <span>Every reveal is storyboarded and timed to your music before a single frame moves.</span>
             <p class="scene__steps">Sketch <i>◆</i> Storyboard <i>◆</i> Motion <i>◆</i> Reveal</p>
           </div>
-          <div class="doorway"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt=""></div>
+          <div class="doorway doorway--green"><div class="doorway__light"></div><img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt=""></div>
         </div>
 
         <div class="corridor__flash" id="corridorFlash" aria-hidden="true"></div>
@@ -354,6 +359,7 @@
         <h2 class="h2 reveal">Enquiries are open for the 2026–27 season</h2>
         <p class="script-line script-line--big reveal">Write to us.</p>
         <p class="body reveal">Tell us a little about your celebration. We’ll write back personally within a day, on WhatsApp or email, with our lookbook and a few first ideas.</p>
+        <p class="writing__direct reveal">Or write to us directly at <a href="mailto:aamantranatelier@gmail.com">aamantranatelier@gmail.com</a></p>
       </div>
 
       <div class="writing__desk reveal">
@@ -420,7 +426,7 @@
           <div class="sealed__wax"><img src="assets/logos/a-emblem-gold.webp" alt="" width="90" height="88"></div>
           <h3>Your letter has reached the atelier</h3>
           <p class="script-line">thank you<span id="sealedName"></span></p>
-          <p class="body">We’ll write back within a day with our lookbook.</p>
+          <p class="body" id="sealedNote">We’ll write back within a day with our lookbook.</p>
         </div>
       </div>
     </section>
@@ -434,11 +440,12 @@
       <p class="endcard__quote reveal">Every celebration deserves a first impression worth remembering.</p>
       <p class="endcard__word">AAMANTRAN</p>
       <p class="endcard__desc">· ATELIER ·</p>
-      <p class="endcard__meta"><a href="https://www.instagram.com/aamantran.atelier/" target="_blank" rel="noopener">@aamantran.atelier</a> · Pan-India &amp; destination weddings · Est. 2026</p>
+      <p class="endcard__contact"><a href="mailto:aamantranatelier@gmail.com">aamantranatelier@gmail.com</a><a href="https://www.instagram.com/aamantran.atelier/" target="_blank" rel="noopener">@aamantran.atelier</a></p>
+      <p class="endcard__meta">Pan-India &amp; destination weddings · Est. 2026</p>
     </div>
     <div class="endcard__lattice" aria-hidden="true"></div>
   </footer>
 
-  <script src="js/site.js?v=4"></script>
+  <script src="js/site.js?v=6"></script>
 </body>
 </html>

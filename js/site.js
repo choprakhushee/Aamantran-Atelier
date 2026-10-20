@@ -6,6 +6,7 @@
   // Paste the Google Apps Script web app URL here to collect enquiries in a Google Sheet.
   // See tools/enquiry-apps-script.gs for the script and the 5-minute setup.
   const LEAD_ENDPOINT = "";
+  const CONTACT_EMAIL = "aamantranatelier@gmail.com";
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const body = document.body;
@@ -63,37 +64,48 @@
   /* ---------- The gate ---------- */
 
   const gate = $("#gate");
-  const heroArch = $("#heroArch");
+  const gateBg = $("#gateBg");
+  const gateDoor = $("#gateDoor");
+  const gateScene = $("#gateScene");
   const timers = [];
+  // Where the doors sit in the entrance painting (1672 x 941).
+  const ART = { w: 1672, h: 941, x: 648, y: 155, dw: 350, dh: 590 };
+
+  function placeGate() {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const s = Math.max(vw / ART.w, vh / ART.h); // object-fit: cover
+    const ox = (vw - ART.w * s) / 2, oy = (vh - ART.h * s) / 2;
+    const x = ox + ART.x * s, y = oy + ART.y * s, w = ART.dw * s, h = ART.dh * s;
+    Object.assign(gateDoor.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+    gateScene.style.setProperty("--gx", x + w / 2 + "px");
+    gateScene.style.setProperty("--gy", y + h * 0.55 + "px");
+  }
+  placeGate();
+  window.addEventListener("resize", placeGate);
+
+  let entered = false;
   function enter() {
+    if (entered) return;
+    entered = true;
     timers.forEach(clearTimeout);
-    gate.classList.add("is-drawn", "is-parted");
-    body.classList.add("is-drawing", "is-entering");
-    // The hero's seal is engraved as the forecourt comes into view.
-    setTimeout(() => heroArch.classList.add("is-drawn"), 1600);
-    setTimeout(() => heroArch.classList.add("is-parted"), 4600);
-    setTimeout(() => body.classList.remove("is-gate"), 1600);
-    setTimeout(() => body.classList.add("is-in"), 2800);
+    body.classList.add("is-entering");                         // the doors swing open
+    setTimeout(() => body.classList.add("is-walking"), 1300);  // and you walk through
+    setTimeout(() => body.classList.remove("is-gate"), 2000);
+    setTimeout(() => body.classList.add("is-in"), 3600);
   }
   if (reduceMotion) {
-    gate.classList.add("is-drawn", "is-parted");
-    heroArch.classList.add("is-drawn", "is-parted");
-    body.classList.add("is-drawing", "is-entering", "is-in");
+    body.classList.add("is-entering", "is-in");
     body.classList.remove("is-gate");
   } else {
     // Within one visit, coming back to the page opens the doors straight away.
     let seen = false;
     try { seen = sessionStorage.getItem("aa-gate") === "1"; sessionStorage.setItem("aa-gate", "1"); } catch (e) {}
-    const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
-    Promise.race([fontsReady, new Promise((r) => setTimeout(r, 1500))]).then(() => {
-      if (seen) { requestAnimationFrame(enter); return; }
-      requestAnimationFrame(() => {
-        gate.classList.add("is-drawn");
-        body.classList.add("is-drawing");
-        timers.push(setTimeout(() => gate.classList.add("is-parted"), 2700));
-        timers.push(setTimeout(enter, 3900));
-      });
-    });
+    const ready = Promise.race([
+      gateBg.decode ? gateBg.decode().catch(() => {}) : Promise.resolve(),
+      new Promise((r) => setTimeout(r, 2500)),
+    ]);
+    ready.then(() => { timers.push(setTimeout(enter, seen ? 100 : 1300)); });
+    timers.push(setTimeout(enter, 5000)); // never hold the page hostage
     gate.addEventListener("click", enter);
     window.addEventListener("keydown", (e) => { if (body.classList.contains("is-gate") && (e.key === "Enter" || e.key === " " || e.key === "Escape")) enter(); });
   }
@@ -130,16 +142,17 @@
 
     scenes.forEach((sc, i) => {
       const t = cam - i;
-      const arrive = i === 0 ? 1 : smooth((t + 0.07) / 0.09); // the next room appears out of the light
+      const arrive = i === 0 ? 1 : smooth((t + 0.14) / 0.1); // the next room appears out of the doorway
       const turn = smooth((t - 0.36) / 0.24);   // turn toward the door and walk up to it
       const open = smooth((t - 0.6) / 0.2);     // the doors swing open
-      const through = smooth((t - 0.8) / 0.2);  // and you step through, into the light
-      const leave = i === n - 1 ? 1 : 1 - smooth((t - 0.93) / 0.07);
+      const through = smooth((t - 0.78) / 0.22); // and you step through
+      // Stay solid until the next room has fully appeared over you, so nothing washes out.
+      const leave = i === n - 1 ? 1 : 1 - smooth((t - 0.97) / 0.03);
       const o = Math.min(arrive, leave);
 
       const tx = (vw / 2 - sc.cx) * turn;
       const ty = (vh / 2 - sc.cy) * turn;
-      const s = (1.12 - 0.12 * arrive) * (1 + 0.42 * turn) * (1 + 5 * through);
+      const s = (1.12 - 0.12 * arrive) * (1 + 0.42 * turn) * (1 + 3 * through);
       // A slight swing of the head as you turn toward the door.
       const dir = sc.el.dataset.door === "left" ? -1 : 1;
       const swing = -dir * 9 * Math.sin(Math.PI * turn);
@@ -157,7 +170,7 @@
       sc.leaves[1].style.transform = `rotateY(${a.toFixed(2)}deg)`;
       sc.leaves.forEach((l) => { l.style.filter = `brightness(${(1 - 0.4 * open).toFixed(3)})`; });
 
-      if (i === n - 1) flash.style.opacity = smooth((t - 0.84) / 0.12).toFixed(3);
+      if (i === n - 1) flash.style.opacity = smooth((t - 0.8) / 0.18).toFixed(3); // the last door opens onto the Darbar
     });
 
     hint.style.opacity = p < 0.02 ? "1" : "0";
@@ -331,8 +344,20 @@
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("That email doesn’t look quite right.", form.elements.email);
 
     if (!LEAD_ENDPOINT) {
-      console.warn("Enquiry form is not connected: set LEAD_ENDPOINT in js/site.js.");
-      return fail("Our writing room opens shortly — please try again soon.");
+      // Until the Google Sheet is connected, the letter goes by email instead.
+      const lines = [
+        ["Name", name], ["Partner", data.get("partner")], ["WhatsApp", phone], ["Email", email],
+        ["Wedding month", data.get("wedding_date")], ["City or venue", data.get("city")],
+        ["Looking for", data.get("interest")], ["Functions", data.getAll("functions").join(", ")],
+        ["Our story", data.get("note")],
+      ].filter(([, v]) => v && String(v).trim()).map(([k, v]) => `${k}: ${String(v).trim()}`);
+      const subject = "Enquiry: " + name + (data.get("partner") ? " & " + data.get("partner") : "");
+      location.href = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n"));
+      $("#sealedName").textContent = ", " + name.split(" ")[0];
+      $("#sealedNote").textContent = "Your email app has opened with your letter. Press send, and we’ll write back within a day.";
+      form.hidden = true;
+      $("#sealed").hidden = false;
+      return;
     }
 
     const params = new URLSearchParams({

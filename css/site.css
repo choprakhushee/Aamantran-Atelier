@@ -124,11 +124,12 @@ strong { font-weight: 500; }
 .btn[disabled] { opacity: .6; cursor: progress; }
 
 .link {
+  display: inline-block;
   font: 400 12px/1 var(--text);
   letter-spacing: .3em;
   text-transform: uppercase;
   text-decoration: none;
-  padding: 8px 0;
+  padding: 16px 0 14px;
   border-bottom: 1px solid var(--gold);
   color: var(--maroon);
 }
@@ -150,101 +151,74 @@ strong { font-weight: 500; }
 .tag b { font: 400 clamp(22px, 2.2vw, 30px)/1.15 var(--display); letter-spacing: .12em; text-transform: uppercase; }
 .tag span { max-width: 26em; font-size: 16px; line-height: 1.5; color: var(--cocoa); }
 
-/* ---------- The gate: two plain maroon doors that swing open ---------- */
+/* ---------- The gate: the sunlit entrance; its doors swing open and you walk through ---------- */
 
-.gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; perspective: 1800px; }
+.gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; overflow: hidden; background: #1a0c08; }
+.gate__scene {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--gx, 50%) var(--gy, 50%);
+  transition: transform 2.2s cubic-bezier(.55, 0, .35, 1), opacity 1.2s var(--ease) .9s;
+}
+.gate__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.gate__doorway { position: absolute; perspective: 1200px; }
+/* Behind the doors: the courtyard, in the shape of the doorway. */
+.gate__view {
+  position: absolute;
+  inset: 0;
+  background: url("../assets/art/hero.webp") center 62% / cover;
+  -webkit-mask: url("../assets/art/gate-door-l.webp") left top / 51% 100% no-repeat, url("../assets/art/gate-door-r.webp") right top / 51% 100% no-repeat;
+  mask: url("../assets/art/gate-door-l.webp") left top / 51% 100% no-repeat, url("../assets/art/gate-door-r.webp") right top / 51% 100% no-repeat;
+}
 .gate__leaf {
   position: absolute;
   top: 0;
-  bottom: 0;
-  width: 50.1%;
-  padding: clamp(16px, 3vw, 44px);
-  background: var(--maroon);
+  width: 50%;
+  height: 100%;
+  object-fit: fill;
   transition: transform 2s var(--ease), filter 2s var(--ease);
 }
-.gate__leaf--l { left: 0; transform-origin: 0 50%; box-shadow: inset -2px 0 0 var(--gold); }
-.gate__leaf--r { right: 0; transform-origin: 100% 50%; box-shadow: inset 2px 0 0 var(--gold); }
-/* Inlaid panels with a gold hairline, as on a carved door. */
-.gate__panel {
-  height: 100%;
-  border: 1px solid rgba(201, 165, 107, .55);
-  padding: 14px;
-  display: grid;
-  grid-template-rows: 2.2fr 1fr;
-  gap: 14px;
-}
-.gate__panel::before, .gate__panel::after {
-  content: "";
-  border: 1px solid rgba(201, 165, 107, .4);
-  background: var(--maroon-deep);
-}
-.gate__panel::before { border-radius: 50% 50% 0 0 / 18% 18% 0 0; }
-/* Brass ring pulls, low on each door so they never sit behind the crest */
-.gate__leaf::after {
-  content: "";
-  position: absolute;
-  top: 66%;
-  width: 26px;
-  height: 26px;
-  border: 2px solid var(--gold);
-  border-radius: 50%;
-}
-.gate__leaf--l::after { right: 22px; }
-.gate__leaf--r::after { left: 22px; }
-
-/* The crest is engraved straight onto the doors — no plaque. */
-.gate__crest {
+.gate__leaf--l { left: 0; transform-origin: 0 50%; }
+.gate__leaf--r { right: 0; transform-origin: 100% 50%; }
+/* Light breathing through the gap where the doors meet */
+.gate__seam {
   position: absolute;
   left: 50%;
-  top: 40%;
-  z-index: 2;
-  transform: translate(-50%, -50%);
-  display: grid;
-  justify-items: center;
-  width: min(90vw, 560px);
-  text-align: center;
-  color: var(--linen);
-  transition: opacity 1.2s var(--ease), transform 1.4s var(--ease);
-}
-.gate__chhatri { width: clamp(100px, 17vh, 170px); }
-.gate__word {
-  margin: 30px 0 0;
-  font: 400 clamp(30px, 6vw, 60px)/1 var(--display);
-  letter-spacing: .2em;
-  padding-left: .2em;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 1.4s var(--ease) 1.4s, transform 1.4s var(--ease) 1.4s;
-}
-.gate__desc {
-  margin: 16px 0 0;
-  font: 400 clamp(12px, 2vw, 20px)/1 var(--display);
-  letter-spacing: .5em;
-  padding-left: .5em;
-  color: var(--gold);
-  opacity: 0;
-  transition: opacity 1.4s var(--ease) 1.9s;
+  top: 6%;
+  bottom: 0;
+  width: 3px;
+  margin-left: -1.5px;
+  background: linear-gradient(transparent, #fff6dc 20%, #ffe7b0 80%, #fff3d0);
+  box-shadow: 0 0 18px 4px rgba(255, 214, 140, .75);
+  animation: seam 2.4s var(--ease) infinite alternate;
+  transition: opacity .6s var(--ease);
 }
 .gate__skip {
   position: absolute;
   z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: 30px;
+  left: 50%;
+  bottom: 26px;
   margin: 0;
-  text-align: center;
+  padding: 10px 16px;
+  transform: translateX(-50%);
+  background: var(--maroon);
+  box-shadow: var(--shadow-tag);
   font: 400 11px/1 var(--text);
   letter-spacing: .3em;
   text-transform: uppercase;
   color: var(--gold);
   transition: opacity .8s var(--ease);
 }
-body.is-drawing .gate__word, body.is-drawing .gate__desc { opacity: 1; transform: none; }
-body.is-entering .gate__crest { opacity: 0; transform: translate(-50%, -50%) scale(.96); }
 body.is-entering .gate__skip { opacity: 0; }
-body.is-entering .gate__leaf--l { transform: rotateY(-104deg); filter: brightness(.55); transition-delay: .6s; }
-body.is-entering .gate__leaf--r { transform: rotateY(104deg); filter: brightness(.55); transition-delay: .6s; }
+body.is-entering .gate__seam { animation: none; opacity: 0; }
+body.is-entering .gate__leaf--l { transform: rotateY(-100deg); filter: brightness(.6); }
+body.is-entering .gate__leaf--r { transform: rotateY(100deg); filter: brightness(.6); }
+/* Then step through the doorway. */
+body.is-walking .gate__scene { transform: scale(7); opacity: 0; }
+/* Let the forecourt show through as the scene fades, rather than a dark frame. */
+body.is-walking .gate { background: transparent; transition: background-color .4s; }
 body.is-in .gate { display: none; }
+@keyframes seam { from { opacity: .55; } to { opacity: 1; } }
 
 /* The chhatri drawing (brand kit: chhatri-line-gold) */
 .chhatri { width: 100%; height: auto; overflow: visible; }
@@ -463,16 +437,16 @@ body.is-gate .plan { opacity: 0; }
 
 /* Entrance, after the gate opens */
 .in-1, .in-2, .in-3 { opacity: 0; transform: translateY(16px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
-body.is-entering .hero-arch { opacity: 1; transform: none; transition-delay: 1.4s; }
-body.is-entering .in-1 { opacity: 1; transform: none; transition-delay: 1.5s; }
-body.is-entering .write { animation: write 1.5s var(--ease) 1.8s forwards; }
-body.is-entering .write--2 { animation-delay: 2.7s; }
-body.is-entering .in-2 { opacity: 1; transform: none; transition-delay: 3.3s; }
-body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
+body.is-entering .hero-arch { opacity: 1; transform: none; transition-delay: 2.2s; }
+body.is-entering .in-1 { opacity: 1; transform: none; transition-delay: 2.3s; }
+body.is-entering .write { animation: write 1.5s var(--ease) 2.6s forwards; }
+body.is-entering .write--2 { animation-delay: 3.5s; }
+body.is-entering .in-2 { opacity: 1; transform: none; transition-delay: 4.1s; }
+body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 
 /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
-.corridor { position: relative; height: 640vh; background: #140c0a; }
+.corridor { position: relative; height: 540vh; background: #140c0a; }
 .corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1400px; }
 
 .scene {
@@ -543,9 +517,11 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at 50% 62%, #fffaf0, #f7deae 40%, #d9a463 100%);
-  -webkit-mask: url("../assets/art/door-l.webp") left top / 51% 100% no-repeat, url("../assets/art/door-r.webp") right top / 51% 100% no-repeat;
-  mask: url("../assets/art/door-l.webp") left top / 51% 100% no-repeat, url("../assets/art/door-r.webp") right top / 51% 100% no-repeat;
+  -webkit-mask: var(--door-l) left top / 51% 100% no-repeat, var(--door-r) right top / 51% 100% no-repeat;
+  mask: var(--door-l) left top / 51% 100% no-repeat, var(--door-r) right top / 51% 100% no-repeat;
 }
+.doorway { --door-l: url("../assets/art/door-l.webp"); --door-r: url("../assets/art/door-r.webp"); }
+.doorway--green { --door-l: url("../assets/art/door-green-l.webp"); --door-r: url("../assets/art/door-green-r.webp"); }
 .leaf {
   position: absolute;
   top: 0;
@@ -557,7 +533,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 .leaf--l { left: 0; transform-origin: 0 50%; }
 .leaf--r { right: 0; transform-origin: 100% 50%; }
 
-.corridor__flash { position: absolute; inset: 0; z-index: 3; background: radial-gradient(circle at 50% 55%, #fffaf0, #f7deae 60%, #e3b57a); opacity: 0; pointer-events: none; }
+.corridor__flash { position: absolute; inset: 0; z-index: 3; background: var(--green); opacity: 0; pointer-events: none; }
 .scene__lantern {
   position: absolute;
   top: -3vh;
@@ -595,7 +571,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   animation: hint 2.4s var(--ease) infinite;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   .scene__info { top: 76px; left: 16px !important; right: 16px !important; width: auto; padding: 20px 20px 22px; transform: none; }
   .scene__info span { font-size: 15px; }
   .scene__info b { font-size: 21px; }
@@ -603,7 +579,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   .scene__names { font-size: 40px; }
   .sw { width: 44px; height: 54px; }
   .scene__swatches { gap: 10px; }
-  .doorway { --h: min(46svh, 420px); top: auto; bottom: 5svh; }
+  .doorway { --h: min(54svh, 560px); top: auto; bottom: 4svh; }
   .scene[data-door="right"] .doorway { right: 10vw; }
   .scene[data-door="left"] .doorway { left: 10vw; }
   .scene__lantern { display: none; }
@@ -702,15 +678,15 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 .invite__corner { position: absolute; width: 19%; pointer-events: none; }
 .invite__corner--tl { left: 2%; top: 2%; }
 .invite__corner--br { right: 2%; bottom: 2%; transform: rotate(180deg); }
-.invite__eyebrow { margin: 0; font: 400 2.4cqw/1.4 var(--text); letter-spacing: .3em; text-transform: uppercase; color: var(--cocoa); }
+.invite__eyebrow { margin: 0; font: 400 max(2.4cqw, 9px)/1.4 var(--text); letter-spacing: .3em; text-transform: uppercase; color: var(--cocoa); }
 .invite__names { margin: 5cqw 0 0; display: grid; font: 400 14cqw/1 var(--script); color: var(--maroon); }
 .nm { display: block; padding: 0 .2em .1em; }
 .nm--2 { margin-top: -.08em; }
 .amp { font-size: .62em; margin-right: .12em; }
 .invite__rule { width: 14cqw; height: 1px; margin: 5cqw 0 4cqw; background: var(--gold); }
 .invite__event { margin: 0; font: 400 4.6cqw/1.2 var(--display); letter-spacing: .14em; padding-left: .14em; text-transform: uppercase; color: var(--ink); }
-.invite__date { margin: 3.5cqw 0 0; font: 400 3.8cqw/1 var(--text); letter-spacing: .32em; padding-left: .32em; color: var(--ink); }
-.invite__venue { margin: 3.5cqw 0 0; font: 300 3cqw/1.4 var(--text); color: var(--cocoa); }
+.invite__date { margin: 3.5cqw 0 0; font: 400 max(3.8cqw, 12px)/1 var(--text); letter-spacing: .32em; padding-left: .32em; color: var(--ink); }
+.invite__venue { margin: 3.5cqw 0 0; font: 300 max(3cqw, 11px)/1.4 var(--text); color: var(--cocoa); }
 .stage.is-writing .nm { clip-path: inset(-30% 100% -30% 0); animation: write 1.5s var(--ease) forwards; }
 .stage.is-writing .nm--2 { animation-delay: 1.1s; }
 
@@ -791,7 +767,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   right: 0;
   bottom: 0;
   z-index: 5;
-  padding: 10px 14px;
+  padding: 15px 18px;
   border: 0;
   background: var(--linen);
   font: 400 10px/1 var(--text);
@@ -803,8 +779,10 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 .stagewrap__note { margin: 22px 0 0; text-align: center; font: 400 11px/1.5 var(--text); letter-spacing: .22em; text-transform: uppercase; color: var(--cocoa); }
 
 @media (max-width: 960px) {
-  .gallery { grid-template-columns: 1fr; gap: 60px; }
-  .stagewrap { order: -1; }
+  .gallery { grid-template-columns: 1fr; gap: 0; }
+  .gallery__copy { display: contents; }
+  .stagewrap { order: 1; margin: 44px 0 10px; }
+  .motions { order: 2; }
 }
 
 /* ---------- The Colonnade ---------- */
@@ -926,7 +904,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   box-shadow: 0 0 0 4px var(--linen), 0 0 0 5px var(--gold);
   transform: rotate(45deg);
 }
-.step h3 { margin: 30px 0 10px; font: 400 17px/1.3 var(--display); letter-spacing: .12em; text-transform: uppercase; }
+.step h3 { margin: 30px 0 10px; font: 400 16px/1.35 var(--display); letter-spacing: .08em; text-transform: uppercase; }
 .step p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--cocoa); }
 .steps .step:nth-child(2) { transition-delay: .1s; }
 .steps .step:nth-child(3) { transition-delay: .2s; }
@@ -936,7 +914,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 .steps .step:nth-child(7) { transition-delay: .6s; }
 .journey__live { margin: 90px 0 0; padding-top: 30px; border-top: 1px solid var(--hairline); font-size: 17px; color: var(--cocoa); }
 .journey__live a { color: var(--maroon); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: 6px; }
-@media (max-width: 1100px) {
+@media (max-width: 1360px) {
   .steps { grid-template-columns: 1fr; gap: 36px; max-width: 640px; }
   .steps::before { left: 30px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; transform: scaleY(var(--p, 0)); }
   .step { display: grid; grid-template-columns: 60px 1fr; column-gap: 28px; }
@@ -1068,8 +1046,12 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 .endcard__quote { max-width: 15em; margin: 46px 0 0; font: 400 clamp(36px, 4.6vw, 70px)/1.2 var(--script); }
 .endcard__word { margin: 56px 0 0; font: 400 clamp(26px, 3vw, 40px)/1 var(--display); letter-spacing: .2em; padding-left: .2em; }
 .endcard__desc { margin: 14px 0 0; font: 400 clamp(10px, 1vw, 13px)/1 var(--display); letter-spacing: .5em; padding-left: .5em; color: var(--gold); }
-.endcard__meta { margin: 50px 0 0; font: 400 12px/1.8 var(--text); letter-spacing: .26em; text-transform: uppercase; color: rgba(242, 233, 225, .75); }
-.endcard__meta a { color: var(--linen); text-decoration: none; border-bottom: 1px solid var(--gold); }
+.endcard__contact { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 34px; margin: 46px 0 0; font: 400 13px/1.6 var(--text); letter-spacing: .14em; }
+.endcard__contact a { display: inline-block; padding: 12px 0 4px; color: var(--linen); text-decoration: none; border-bottom: 1px solid var(--gold); }
+.writing__direct { margin: 26px 0 0; font-size: 16px; color: var(--cocoa); }
+.writing__direct a { color: var(--maroon); text-decoration: none; border-bottom: 1px solid var(--gold); }
+.endcard__meta { margin: 30px 0 0; font: 400 12px/1.8 var(--text); letter-spacing: .26em; text-transform: uppercase; color: rgba(242, 233, 225, .75); }
+.endcard__meta a { display: inline-block; padding: 12px 0 4px; color: var(--linen); text-decoration: none; border-bottom: 1px solid var(--gold); }
 .endcard__lattice { height: 120px; background: var(--p-lattice); border-top: 1px solid var(--gold); }
 
 /* ---------- Scroll reveals ---------- */
