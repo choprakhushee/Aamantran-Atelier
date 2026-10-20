@@ -446,9 +446,8 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 
 /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
-.corridor { position: relative; height: 640vh; background: #140c0a; }
-/* The Darbar overlaps the corridor's last screen, so it rises straight out of the final doorway. */
-.corridor + .darbar { margin-top: -100svh; z-index: 2; }
+.corridor { position: relative; height: 700vh; background: #140c0a; }
+.corridor__anchor { position: absolute; left: 0; top: calc(100% - 130svh); }
 .corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1400px; }
 
 .scene {
@@ -464,40 +463,14 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 /* The room is wider than the screen: the door waits round the corner, off to one side. */
 .scene__wall { position: absolute; left: -160%; right: -160%; top: -60%; bottom: var(--floor); }
 /* Wall treatments — drawn in the palette, after gilded panelling, palace arcades and painted garden walls.
-   The panelled plaster itself is generated in js/site.js (wallTile). */
-.scene__wall { background-repeat: repeat-x; background-position: 0 100%; background-size: auto calc(100% / 1.6 + 1px); }
+   Each wall is laid out in bays around its inscription and its door (layoutWalls in js/site.js);
+   the plaster underneath is a small mottled tile. */
+.scene__wall { background-repeat: repeat; background-size: 400px 400px; }
+.scene__wall > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .scene--blush .scene__wall { background-color: #e2c6bb; }
 .scene--lacquer .scene__wall { background-color: #561819; }
 .scene--green .scene__wall { background-color: #1d3529; }
 .scene--mural .scene__wall { background-color: #ece1cf; }
-/* A harlequin dado under the lacquer panels */
-.scene--lacquer .scene__wall::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(100% / 1.6 * .3);
-  background: var(--p-harlequin);
-  background-size: 120px 110px;
-  border-top: 10px solid var(--gold);
-  box-shadow: 0 -3px 0 #8f6c35, inset 0 6px 14px rgba(20, 8, 6, .35);
-}
-/* The garden wall: painted niches, lotus stems and vine sprigs */
-.scene--mural .scene__wall::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(100% / 1.6);
-  background:
-    url("../assets/motifs/vine-sprig.svg") 70px 100% / auto 34% repeat-x,
-    url("../assets/motifs/bloom-stem.svg") 260px 100% / auto 26% repeat-x,
-    url("../assets/motifs/bloom-stem.svg") 470px 100% / auto 40% repeat-x,
-    url("../assets/motifs/arch-green.svg") 0 32% / auto 54% space no-repeat;
-  opacity: .92;
-}
 .scene__wall::after {
   /* skirting where the wall meets the floor, and a little shade toward the ceiling */
   content: "";
@@ -550,20 +523,11 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .inscription {
   position: absolute;
   left: 50%;
-  top: calc((100% - var(--floor)) / 2);
-  width: min(48vw, 600px);
-  padding: clamp(30px, 4vh, 54px) clamp(26px, 3vw, 56px) clamp(34px, 4.4vh, 58px);
+  top: var(--iy, 40%);
+  width: var(--iw, min(48vw, 600px));
+  padding: 0 clamp(20px, 2.4vw, 40px);
   transform: translate(-50%, -50%);
   text-align: center;
-  /* a recessed panel: gilt moulding, an inner hairline, a little shade at the top */
-  box-shadow:
-    inset 0 0 0 7px var(--frame, var(--gold)),
-    inset 0 0 0 8px rgba(20, 8, 6, .35),
-    inset 0 0 0 20px transparent,
-    inset 0 0 0 21px var(--frame, var(--gold)),
-    inset 0 14px 30px rgba(20, 8, 6, .22),
-    0 2px 0 rgba(255, 248, 235, .25);
-  background: var(--panel);
 }
 .inscription > * { margin: 0; opacity: 0; transform: translateY(10px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
 .scene.is-info .inscription > * { opacity: 1; transform: none; }
@@ -716,20 +680,9 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   animation: sway 5s var(--ease) infinite alternate;
   filter: drop-shadow(0 0 40px rgba(255, 196, 110, .5));
 }
-.scene[data-door="right"] .scene__lantern { left: calc(100vw + 34vw - var(--dh) * .5 - 16vw); }
-.scene[data-door="left"] .scene__lantern { left: calc(-34vw + var(--dh) * .3 + 8vw); }
+.scene__lantern { left: var(--lx, 70%); translate: -50% 0; top: var(--ly, -3vh); z-index: 1; }
 
 .corridor__flash { position: absolute; inset: 0; z-index: 3; background: var(--green); opacity: 0; pointer-events: none; }
-.scene__lantern {
-  position: absolute;
-  top: -3vh;
-  right: calc(12vw + min(70svh, 760px) * .472 + 4vw);
-  height: min(44svh, 470px);
-  width: auto;
-  transform-origin: 50% 0;
-  animation: sway 5s var(--ease) infinite alternate;
-  filter: drop-shadow(0 0 40px rgba(255, 196, 110, .5));
-}
 .corridor__hint {
   position: absolute;
   z-index: 5;
@@ -760,7 +713,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 @media (max-width: 760px), (max-width: 1100px) and (orientation: portrait) {
   .scene { --floor: 12svh; --dh: min(58svh, 560px); }
   .scene__info { top: 44%; width: calc(100vw - 32px); padding: 22px 20px 24px; }
-  .inscription { top: 34%; width: calc(100vw - 32px); padding: 28px 24px 30px; }
+  .inscription { padding: 0 22px; }
   .inscription__text { font-size: 15px; }
   .inscription__text br { display: none; }
   .paraat { left: 4%; width: 52vw; bottom: 1svh; }
@@ -774,8 +727,6 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   .scene[data-door="right"] .doorway { left: calc(100vw + 60vw - var(--dh) * .236); }
   .scene[data-door="left"] .doorway { left: calc(-60vw - var(--dh) * .236); }
   .scene__lantern { height: 24svh; }
-  .scene[data-door="right"] .scene__lantern { left: calc(100vw + 60vw - var(--dh) * .5 - 30vw); }
-  .scene[data-door="left"] .scene__lantern { left: calc(-60vw + var(--dh) * .3 + 14vw); }
 }
 
 /* ---------- The Darbar (the one bottle-green band) ---------- */
@@ -800,6 +751,39 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .darbar__lanterns img:nth-child(3) { height: clamp(250px, 40vw, 600px); animation-delay: -3.2s; animation-duration: 5.4s; }
 @media (max-width: 1000px) { .darbar__lanterns { opacity: .3; right: 2vw; } }
 @media (max-width: 700px) { .darbar__lanterns img:nth-child(n) { height: 150px; } .darbar__lanterns img:nth-child(2) { display: none; } }
+/* The Darbar as the corridor's last scene: it waits, unseen, until the final door has opened. */
+.darbar--finale {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  padding: 100px var(--gutter) 60px;
+  background: transparent;
+  visibility: hidden;
+}
+.darbar--finale.is-arrived { visibility: visible; }
+.darbar__body { position: relative; }
+.darbar--finale .darbar__lanterns img { translate: 0 -115%; transition: translate 2.2s var(--ease); }
+.darbar--finale .darbar__lanterns img:nth-child(2) { transition-delay: .35s; }
+.darbar--finale .darbar__lanterns img:nth-child(3) { transition-delay: .7s; }
+.darbar--finale.is-arrived .darbar__lanterns img { translate: 0 0; }
+.darbar--finale .fin, .darbar--finale .darbar__sprig { opacity: 0; transform: translateY(18px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
+.darbar--finale.is-arrived .fin, .darbar--finale.is-arrived .darbar__sprig { opacity: 1; transform: none; }
+.darbar--finale.is-arrived .darbar__dev { transition-delay: .5s; }
+.darbar--finale.is-arrived .darbar__title { transition-delay: .9s; }
+.darbar--finale.is-arrived .darbar__cols .fin:nth-child(1) { transition-delay: 1.4s; }
+.darbar--finale.is-arrived .darbar__cols .fin:nth-child(2) { transition-delay: 1.7s; }
+.darbar--finale.is-arrived .darbar__sprig { transition-delay: 1.9s; }
+.darbar--finale .darbar__cols { margin-top: 40px; }
+@media (max-width: 760px) {
+  .darbar--finale { padding: 84px 20px 30px; align-items: flex-start; }
+  .darbar--finale .darbar__dev { font-size: 64px; }
+  .darbar--finale .darbar__title { font-size: 26px; margin-top: 8px; }
+  .darbar--finale .darbar__cols { margin-top: 22px; gap: 14px; }
+  .darbar--finale .darbar__cols p { font-size: 15px; line-height: 1.55; }
+}
+@media (max-height: 760px) and (min-width: 761px) { .darbar--finale .darbar__dev { font-size: clamp(64px, 9vw, 120px); } .darbar--finale .darbar__cols { margin-top: 24px; } }
 .darbar__dev { margin: 0; font: 400 clamp(80px, 13vw, 200px)/1.15 var(--dev); color: var(--gold); }
 .darbar__title {
   position: relative;

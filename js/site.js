@@ -226,10 +226,103 @@
     const view = $(".doorway__view", sc);
     if (view && VIEWS[next]) view.style.background = VIEWS[next];
   });
-  $$("[data-wall]").forEach((el) => {
-    const kind = (el.closest(".scene").className.match(/scene--(\w+)/) || [])[1];
-    if (WALLS[kind]) el.style.backgroundImage = WALLS[kind];
-  });
+  // The plaster itself: a small mottled tile under each wall's layout.
+  function plaster(base, m) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".011 .018" numOctaves="4" seed="7" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 ${m[0]} 0 0 0 0 ${m[1]} 0 0 0 0 ${m[2]} 0 0 0 1.1 -.48"/></filter><rect width="400" height="400" fill="${base}"/><rect width="400" height="400" filter="url(#n)"/></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  }
+  const PLASTER = {
+    blush: plaster("#e2c6bb", [0.72, 0.52, 0.48]),
+    lacquer: plaster("#5c1a1b", [0.22, 0.05, 0.06]),
+    green: plaster("#1f3a2e", [0.07, 0.16, 0.12]),
+    mural: plaster("#ece1cf", [0.82, 0.74, 0.62]),
+  };
+  const FEATURE = { blush: "#dcbcb0", lacquer: "#4a1415", green: "#172c22", mural: "#f4ece0" };
+
+  // Lay each wall out in bays: the inscription takes the centre bay, the door sits a whole
+  // number of bays away, every other bay is panelled, and the lantern hangs on the axis between.
+  function layoutWalls() {
+    $$(".scene").forEach((scene) => {
+      const kind = (scene.className.match(/scene--(\w+)/) || [])[1];
+      const wall = $(".scene__wall", scene), door = $(".doorway", scene);
+      const ins = $(".inscription", scene), lantern = $(".scene__lantern", scene);
+      const vw = scene.offsetWidth;
+      const wx = wall.offsetLeft, wy = wall.offsetTop, W = wall.offsetWidth, H = wall.offsetHeight;
+      const yb = wy + H;                                       // where wall meets floor (scene coords)
+      const dcx = door.offsetLeft + door.offsetWidth / 2;
+      const dist = Math.abs(dcx - vw / 2), side = Math.sign(dcx - vw / 2);
+      const narrow = vw < 760;
+      const k = Math.max(1, Math.round(dist / (narrow ? 700 : 580)));
+      const P = dist / k;                                      // bay pitch
+      const g = Math.min(34, P * 0.07);                        // gap between panel and bay edge
+      const top = 74, yd = yb - Math.max(150, (yb - top) * 0.27); // upper panels and the dado rail
+      const X = (x) => (x - wx).toFixed(1), Y = (y) => (y - wy).toFixed(1);
+      const doorIndex = side * k;
+      const frame = (x0, y0, w, h, fill, rich) => `
+        ${fill ? `<rect x="${X(x0)}" y="${Y(y0)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${fill}"/>` : ""}
+        <rect x="${X(x0 + 2)}" y="${Y(y0 + 3)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="none" stroke="rgba(20,8,6,.32)" stroke-width="7"/>
+        <rect x="${X(x0)}" y="${Y(y0)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="none" stroke="url(#gilt)" stroke-width="${rich ? 9 : 6}"/>
+        <rect x="${X(x0 + 15)}" y="${Y(y0 + 15)}" width="${(w - 30).toFixed(1)}" height="${(h - 30).toFixed(1)}" fill="none" stroke="url(#gilt)" stroke-width="${rich ? 2.4 : 1.6}"/>
+        ${rich ? `<rect x="${X(x0 + 22)}" y="${Y(y0 + 22)}" width="${(w - 44).toFixed(1)}" height="${(h - 44).toFixed(1)}" fill="none" stroke="url(#gilt)" stroke-width="1"/>` : ""}`;
+      const crest = (cx, y, big) => `<g fill="url(#gilt)"><path d="M${X(cx)} ${Y(y - (big ? 16 : 11))}l${big ? 15 : 10} ${big ? 16 : 11}-${big ? 15 : 10} ${big ? 16 : 11}-${big ? 15 : 10}-${big ? 16 : 11}z"/></g>${big ? `<path d="M${X(cx - 70)} ${Y(y)}H${X(cx - 22)}M${X(cx + 22)} ${Y(y)}H${X(cx + 70)}" stroke="url(#gilt)" stroke-width="2"/>` : ""}`;
+      let out = "";
+      const jMin = Math.floor((wx - vw / 2) / P) - 1, jMax = Math.ceil((wx + W - vw / 2) / P) + 1;
+      for (let j = jMin; j <= jMax; j++) {
+        if (j === doorIndex) continue;                         // the door's bay is left plain around its arch
+        const cx = vw / 2 + j * P, x0 = cx - P / 2 + g, w = P - 2 * g;
+        const feature = j === 0;
+        if (kind === "mural") {
+          if (feature) continue;
+          const nh = (yd - top) * 0.82, nw = Math.min(w * 0.7, nh * 0.8);
+          out += `<image href="assets/motifs/arch-green.svg" x="${X(cx - nw / 2)}" y="${Y(top + 20)}" width="${nw.toFixed(1)}" height="${nh.toFixed(1)}" preserveAspectRatio="none"/>`;
+          continue;
+        }
+        out += frame(x0, top, w, yd - 26 - top, feature ? FEATURE[kind] : null, feature);
+        out += crest(cx, top - 6, feature);
+        if (kind !== "lacquer") out += frame(x0, yd + 24, w, yb - 24 - (yd + 24), null, false);
+      }
+      // the inscription's own bay
+      const fx0 = vw / 2 - P / 2 + g, fw = P - 2 * g;
+      if (kind === "mural") out += frame(fx0, top + 20, fw, yd - top - 10, FEATURE.mural, true) + crest(vw / 2, top + 6, true);
+      // lotus plants along the garden wall's base, two to a bay, mirrored about each bay's axis
+      if (kind === "mural") {
+        for (let j = jMin; j <= jMax; j++) {
+          const cx = vw / 2 + j * P;
+          [-0.3, 0.3].forEach((o, n) => {
+            const h = (yb - yd) * (n ? 1.15 : 0.95), w2 = h * 0.79;
+            out += `<image href="assets/motifs/bloom-stem.svg" x="${X(cx + o * P - w2 / 2)}" y="${Y(yb - h)}" width="${w2.toFixed(1)}" height="${h.toFixed(1)}"/>`;
+          });
+        }
+      }
+      // the harlequin dado under the lacquer panels
+      if (kind === "lacquer") out += `<rect x="0" y="${Y(yd)}" width="${W}" height="${(yb - yd).toFixed(1)}" fill="url(#harl)"/><rect x="0" y="${Y(yd)}" width="${W}" height="${(yb - yd).toFixed(1)}" fill="url(#dadoShade)"/>`;
+      // cornice and dado rail run unbroken across the wall
+      const cornice = `<rect x="0" y="${Y(0)}" width="${W}" height="40" fill="rgba(255,248,235,.18)"/><rect x="0" y="${Y(14)}" width="${W}" height="14" fill="url(#dentil)"/><rect x="0" y="${Y(40)}" width="${W}" height="5" fill="url(#gilt)"/><rect x="0" y="${Y(49)}" width="${W}" height="2" fill="url(#gilt)"/>`;
+      const rail = kind === "mural" ? "" : `<rect x="0" y="${Y(yd - 4)}" width="${W}" height="7" fill="url(#gilt)"/><rect x="0" y="${Y(yd + 8)}" width="${W}" height="2" fill="url(#gilt)"/>`;
+      // a crest above the door's arch, on its axis
+      const doorCx = vw / 2 + doorIndex * P, doorTop = yb - door.offsetHeight * 1.08;
+      const doorCrest = crest(doorCx, doorTop - 22, true);
+      wall.style.backgroundImage = PLASTER[kind];
+      wall.style.backgroundPosition = `${-wx}px ${-wy}px`;
+      wall.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="gilt-${kind}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0d9a4"/><stop offset=".45" stop-color="#c9a56b"/><stop offset="1" stop-color="#8f6c35"/></linearGradient>
+          <pattern id="dentil-${kind}" width="22" height="14" patternUnits="userSpaceOnUse"><rect x="4" width="12" height="14" fill="#c9a56b"/></pattern>
+          <pattern id="harl-${kind}" width="120" height="110" patternUnits="userSpaceOnUse" x="${X(vw / 2 - 60)}" y="${Y(yd)}"><image href="assets/patterns/harlequin.svg" width="120" height="110"/></pattern>
+          <linearGradient id="dadoShade-${kind}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(20,8,6,.4)"/><stop offset=".12" stop-color="rgba(20,8,6,0)"/></linearGradient>
+        </defs>
+        ${(out + cornice + rail + doorCrest).replace(/url\(#(gilt|dentil|harl|dadoShade)\)/g, `url(#$1-${kind})`)}
+      </svg>`;
+      // the words sit centred in their panel; the lantern hangs between the two bays
+      const panelH = kind === "mural" ? yd - top - 10 : yd - 26 - top;
+      const panelY = kind === "mural" ? top + 20 : top;
+      ins.style.setProperty("--iy", panelY + panelH / 2 + "px");
+      ins.style.setProperty("--iw", Math.min(fw - 60, 640) + "px");
+      lantern.style.setProperty("--lx", vw / 2 + side * (k === 1 ? P / 2 : P * Math.floor(k / 2) + (k % 2 ? P / 2 : 0)) + "px");
+      lantern.style.setProperty("--ly", "51px");
+    });
+  }
+  layoutWalls();
 
   const corridor = $("#tour");
   const scenes = $$(".scene", corridor).map((el) => ({
@@ -242,6 +335,7 @@
   }));
   const flash = $("#corridorFlash");
   const hint = $("#corridorHint");
+  const finale = $("#darbarFinale");
 
   function measureCorridor() {
     scenes.forEach((sc) => {
@@ -258,7 +352,7 @@
     const p = clamp(-r.top / (r.height - vh), 0, 1);
     const n = scenes.length;
     // The walk finishes one screen early; the Darbar then rises over the last (green) doorway.
-    const pEnd = 1 - vh / (r.height - vh);
+    const pEnd = 1 - 1.3 * vh / (r.height - vh); // then hold for the Darbar
     const cam = clamp(p / pEnd, 0, 1) * n;
 
     scenes.forEach((sc, i) => {
@@ -296,6 +390,7 @@
     });
 
     hint.style.opacity = p < 0.02 ? "1" : "0";
+    finale.classList.toggle("is-arrived", cam >= n - 0.01);
   }
 
   /* ---------- Reveal on scroll ---------- */
@@ -430,7 +525,7 @@
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { measureCorridor(); onScroll(); }, 150);
+    resizeTimer = setTimeout(() => { layoutWalls(); measureCorridor(); onScroll(); }, 150);
   });
   measureCorridor();
   onScroll();

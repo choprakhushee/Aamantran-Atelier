@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/art/entrance.webp">
   <link rel="apple-touch-icon" href="assets/logos/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/site.css?v=15">
+  <link rel="stylesheet" href="css/site.css?v=17">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Aamantran Atelier","description":"Moving video invitations and wedding websites for Indian weddings.","email":"aamantranatelier@gmail.com","areaServed":"IN","sameAs":["https://www.instagram.com/aamantran.atelier/"],"image":"https://choprakhushee.github.io/Aamantran-Atelier/assets/og.jpg"}</script>
 </head>
 <body class="is-gate">
@@ -182,27 +182,29 @@
         </div>
 
         <div class="corridor__flash" id="corridorFlash" aria-hidden="true"></div>
+        <!-- The Darbar: where the last door opens. Lanterns lower into place and the words appear. -->
+        <div class="darbar darbar--finale" id="darbarFinale">
+          <img class="darbar__sprig" src="assets/motifs/vine-sprig.svg" alt="" width="300" height="380" aria-hidden="true">
+          <div class="darbar__lanterns" aria-hidden="true">
+            <img src="assets/art/lantern-1.webp" alt="">
+            <img src="assets/art/lantern-2.webp" alt="">
+            <img src="assets/art/lantern-3.webp" alt="">
+          </div>
+          <div class="darbar__body">
+            <p class="eyebrow eyebrow--gold fin">01 — The Darbar</p>
+            <p class="darbar__dev fin" lang="hi">आमंत्रण</p>
+            <h2 class="darbar__title fin">An invitation is the first scene of a family’s story.</h2>
+            <div class="darbar__cols">
+              <p class="fin"><em>Aamantran</em> is Hindi for invitation. An <em>atelier</em> is the couturier’s workshop. Together they promise an invitation made by hand, with the patience of couture.</p>
+              <p class="fin">Our look is the <strong>Palace Parlour</strong> — an old-world Rajasthani parlour, patterned and collected. Yours will always be your own: every piece we make for a family is bespoke.</p>
+            </div>
+          </div>
+        </div>
         <p class="corridor__hint" id="corridorHint">Scroll to walk in</p>
       </div>
+      <span class="corridor__anchor" id="darbar" aria-hidden="true"></span>
     </section>
 
-    <!-- ===================== THE DARBAR (the one bottle-green band) ===================== -->
-    <section class="darbar room" id="darbar" data-tone="dark">
-      <img class="darbar__sprig" src="assets/motifs/vine-sprig.svg" alt="" width="300" height="380" aria-hidden="true">
-      <div class="darbar__lanterns" aria-hidden="true">
-        <img src="assets/art/lantern-1.webp" alt="">
-        <img src="assets/art/lantern-2.webp" alt="">
-        <img src="assets/art/lantern-3.webp" alt="">
-      </div>
-      <p class="eyebrow eyebrow--gold reveal">01 — The Darbar</p>
-      <p class="darbar__dev reveal" lang="hi">आमंत्रण</p>
-      <h2 class="darbar__title reveal">An invitation is the first scene of a family’s story.</h2>
-      <div class="darbar__cols">
-        <p class="reveal"><em>Aamantran</em> is Hindi for invitation. An <em>atelier</em> is the couturier’s workshop. Together they promise an invitation made by hand, with the patience of couture.</p>
-        <p class="reveal">Our look is the <strong>Palace Parlour</strong> — an old-world Rajasthani parlour, patterned and collected. Yours will always be your own: every piece we make for a family is bespoke.</p>
-      </div>
-      <div class="darbar__rule reveal" aria-hidden="true"></div>
-    </section>
 
     <!-- ===================== THE GALLERY =====================
          A live invitation, played in each of the five signature motions. -->
@@ -473,6 +475,6 @@
     <div class="endcard__lattice" aria-hidden="true"></div>
   </footer>
 
-  <script src="js/site.js?v=15"></script>
+  <script src="js/site.js?v=17"></script>
 </body>
 </html>
