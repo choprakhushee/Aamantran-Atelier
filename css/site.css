@@ -1216,7 +1216,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 
 .journey { padding: clamp(110px, 12vw, 190px) var(--gutter); background: var(--linen); }
 .journey__head { max-width: 900px; margin-bottom: 80px; }
-.steps { position: relative; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2vw; }
+.steps { position: relative; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 2vw; }
 .steps::before {
   content: "";
   position: absolute;
@@ -1255,7 +1255,6 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .steps .step:nth-child(4) { transition-delay: .3s; }
 .steps .step:nth-child(5) { transition-delay: .4s; }
 .steps .step:nth-child(6) { transition-delay: .5s; }
-.steps .step:nth-child(7) { transition-delay: .6s; }
 .journey__live { margin: 90px 0 0; padding-top: 30px; border-top: 1px solid var(--hairline); font-size: 17px; color: var(--cocoa); }
 .journey__live a { color: var(--maroon); text-decoration: none; border-bottom: 1px solid var(--gold); margin-left: 6px; }
 @media (max-width: 1360px) {
