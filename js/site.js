@@ -218,7 +218,7 @@
     lacquer: `${glow}, ${WALLS.lacquer} 50% 84% / auto 84% repeat-x, #561819`,
     mural: `${glow}, url("assets/motifs/bloom-stem.svg") 8% 84% / auto 24% no-repeat, url("assets/motifs/bloom-stem.svg") 92% 84% / auto 30% no-repeat, url("assets/motifs/arch-green.svg") 50% 38% / auto 50% no-repeat, ${WALLS.mural} 50% 84% / auto 84% repeat-x, #ece1cf`,
     green: `${glow}, ${WALLS.green} 50% 84% / auto 84% repeat-x, #1d3529`,
-    darbar: `url("assets/art/lantern-2.webp") 50% 0 / auto 46% no-repeat, radial-gradient(ellipse at 50% 60%, #35594a, #1F3A2E 72%)`,
+    darbar: `radial-gradient(ellipse at 50% 60%, #35594a, #1F3A2E 72%)`,
   };
   const sceneEls = $$(".scene");
   sceneEls.forEach((sc, i) => {
