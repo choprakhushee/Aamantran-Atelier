@@ -362,22 +362,18 @@ body.is-gate .nav { transform: translateY(-105%); }
 body.is-gate .plan { opacity: 0; }
 @media (max-width: 1100px) { .plan { display: none; } }
 
-/* ---------- Forecourt: the courtyard you step into from the gate ---------- */
+/* ---------- Forecourt: the courtyard on the left, the house introduced on the right ---------- */
 
 .forecourt {
   position: relative;
-  min-height: max(100svh, 760px);
+  min-height: max(100svh, 720px);
   display: grid;
-  grid-template-rows: 1fr auto;
-  justify-items: center;
-  align-items: center;
-  padding: 110px var(--gutter) 46px;
-  overflow: hidden;
-  background: #2a1510;
+  grid-template-columns: 1.25fr 1fr;
+  background: var(--maroon);
   color: var(--linen);
-  isolation: isolate;
+  overflow: hidden;
 }
-.forecourt__scene { position: absolute; inset: 0; z-index: -1; }
+.forecourt__scene { position: relative; overflow: hidden; min-height: 100%; }
 .forecourt__bg {
   position: absolute;
   inset: -4%;
@@ -388,72 +384,89 @@ body.is-gate .plan { opacity: 0; }
   transform: translateY(var(--hy, 0px)) scale(1.06);
   animation: courtyard 30s var(--ease) infinite alternate;
 }
-.forecourt__scene::after {
-  /* dusk settling at the edges, so the plaque and the words hold their own */
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 55% at 50% 44%, rgba(42, 21, 16, 0) 30%, rgba(42, 21, 16, .5) 100%),
-    linear-gradient(rgba(23, 13, 9, .45), rgba(23, 13, 9, 0) 28%, rgba(23, 13, 9, 0) 55%, rgba(23, 13, 9, .82));
-}
+.forecourt__scene::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(23, 13, 9, .1), rgba(23, 13, 9, 0) 60%, rgba(92, 26, 27, .55)); }
 .forecourt__lantern {
   position: absolute;
-  top: -2vh;
-  height: min(46svh, 520px);
+  z-index: 1;
+  top: 60px;
+  height: min(42svh, 460px);
   transform-origin: 50% 0;
   animation: sway 5s var(--ease) infinite alternate;
   filter: drop-shadow(0 0 46px rgba(255, 196, 110, .6));
 }
-.forecourt__lantern--l { left: 7vw; }
-.forecourt__lantern--r { right: 7vw; height: min(38svh, 430px); animation-delay: -2.4s; animation-duration: 5.6s; }
+.forecourt__lantern--l { left: 6%; }
+.forecourt__lantern--r { right: 8%; height: min(34svh, 380px); animation-delay: -2.4s; animation-duration: 5.6s; }
 .forecourt__petals { z-index: 2; }
 @keyframes courtyard { to { transform: translateY(var(--hy, 0px)) scale(1.14); } }
 
-/* the plaque at the heart of the courtyard: the house, introduced */
-.plaque-arch {
+.forecourt__panel {
   position: relative;
   display: grid;
+  align-content: center;
   justify-items: center;
-  width: min(520px, 86vw);
-  padding: clamp(84px, 10vh, 118px) clamp(28px, 4vw, 54px) clamp(36px, 5vh, 56px);
+  gap: 0;
+  padding: 120px clamp(28px, 4vw, 72px) 56px;
   text-align: center;
-  background: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-  filter: drop-shadow(0 30px 50px rgba(10, 4, 3, .55));
+  background: var(--maroon);
+  box-shadow: inset 3px 0 0 var(--gold);
 }
-.plaque-arch__a { width: clamp(64px, 7vw, 92px); height: auto; }
-.plaque-arch__word { margin: 18px 0 0; font: 400 clamp(32px, 4.2vw, 56px)/1 var(--display); letter-spacing: .2em; padding-left: .2em; color: var(--linen); }
-.plaque-arch__desc { margin: 12px 0 0; font: 400 clamp(12px, 1.3vw, 16px)/1 var(--display); letter-spacing: .5em; padding-left: .5em; color: var(--gold); }
-.plaque-arch__rule { display: block; width: 76px; height: 1px; margin: 26px 0 8px; background: var(--gold); }
+/* the jharokha: a carved window in deep maroon, edged in gold, holding the name of the house */
+.jharokha {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: center;
+  width: min(100%, 560px);
+  padding: clamp(96px, 13vh, 140px) clamp(30px, 3.6vw, 56px) clamp(40px, 5vh, 60px);
+}
+.jharokha::before, .jharokha::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  -webkit-mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
+  mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
+}
+.jharokha::before { inset: 0; background: linear-gradient(#f0d9a4, var(--gold) 45%, #8f6c35); }
+.jharokha::after { inset: 3px; background: #4a1415; box-shadow: inset 0 0 60px rgba(0, 0, 0, .25); }
+.jharokha__a { width: clamp(64px, 5.6vw, 96px); height: auto; }
+.jharokha__word { margin: 18px 0 0; font: 400 clamp(26px, 2.5vw, 40px)/1 var(--display); letter-spacing: .2em; padding-left: .2em; color: var(--linen); }
+.jharokha__desc { margin: 10px 0 0; font: 400 clamp(11px, 1vw, 14px)/1 var(--display); letter-spacing: .5em; padding-left: .5em; color: var(--gold); }
+.jharokha__rule { display: block; width: 70px; height: 1px; margin: 22px 0 6px; background: var(--gold); }
 .forecourt__title { margin: 0; font-weight: 400; }
 .write {
   display: block;
-  font: 400 clamp(46px, 5.4vw, 82px)/1.02 var(--script);
+  font: 400 clamp(40px, 3.9vw, 66px)/1.04 var(--script);
   color: var(--gold);
-  padding: 0 .25em .12em;
+  padding: 0 .2em .12em;
   clip-path: inset(-20% 100% -30% 0);
 }
-.write--2 { margin-top: -.14em; padding-left: 1.1em; }
-.plaque-arch__meaning { margin: 14px 0 0; font: 300 14px/1.4 var(--text); letter-spacing: .08em; color: rgba(242, 233, 225, .82); }
-.plaque-arch__meaning span[lang="hi"] { font-family: var(--dev); font-size: 18px; color: var(--gold); letter-spacing: 0; }
-
-.forecourt__foot { display: grid; justify-items: center; text-align: center; margin-top: 34px; }
-.forecourt__sub { max-width: 34em; margin: 0; font-size: clamp(16px, 1.3vw, 19px); color: rgba(242, 233, 225, .9); text-shadow: 0 1px 12px rgba(10, 4, 3, .6); }
-.forecourt__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 26px; }
+.write--2 { margin-top: -.14em; padding-left: .9em; }
+.jharokha__meaning { margin: 16px 0 0; font: 300 14px/1.4 var(--text); letter-spacing: .06em; color: rgba(242, 233, 225, .82); }
+.jharokha__meaning span[lang="hi"] { font-family: var(--dev); font-size: 17px; color: var(--gold); letter-spacing: 0; }
+.forecourt__sub { max-width: 30em; margin: 30px 0 0; font-size: clamp(15px, 1.15vw, 18px); color: rgba(242, 233, 225, .88); }
+.forecourt__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 24px; }
 .btn--gold { background: var(--gold); border-color: var(--gold); color: var(--ink); }
 .btn--gold:hover { background: transparent; color: var(--gold); }
-.btn--ghost { background: rgba(23, 13, 9, .35); border-color: rgba(242, 233, 225, .7); color: var(--linen); }
+.btn--ghost { background: transparent; border-color: rgba(242, 233, 225, .6); color: var(--linen); }
 .btn--ghost:hover { background: var(--linen); color: var(--maroon); }
-.forecourt__season { margin: 24px 0 0; font: 400 11px/1.5 var(--text); letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
-.forecourt .plaque-arch { opacity: 0; transform: translateY(26px) scale(.97); transition: opacity 1.6s var(--ease), transform 1.8s var(--ease); }
-body.is-entering .forecourt .plaque-arch { opacity: 1; transform: none; transition-delay: 2s; }
+.forecourt__season { margin: 22px 0 0; font: 400 11px/1.5 var(--text); letter-spacing: .28em; text-transform: uppercase; color: var(--gold); }
+.forecourt .jharokha { opacity: 0; transform: translateY(20px); transition: opacity 1.6s var(--ease), transform 1.8s var(--ease); }
+body.is-entering .forecourt .jharokha { opacity: 1; transform: none; transition-delay: 2s; }
 
-@media (max-width: 700px) {
-  .forecourt { padding: 96px 16px 30px; }
-  .forecourt__lantern { height: 22svh; }
-  .forecourt__lantern--l { left: -2vw; }
-  .forecourt__lantern--r { right: -2vw; height: 18svh; }
-  .plaque-arch { padding-top: 70px; }
+/* ---------- The welcome: the second scroll, in bottle green ---------- */
+.welcome { display: grid; justify-items: center; padding: clamp(80px, 10vw, 140px) var(--gutter); background: var(--green); color: var(--linen); text-align: center; box-shadow: inset 0 3px 0 var(--gold); }
+.welcome__sub { max-width: 24em; margin: 0; font: 400 clamp(26px, 2.6vw, 40px)/1.3 var(--display); letter-spacing: .02em; color: var(--linen); }
+.welcome__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 40px; }
+.welcome__season { margin: 30px 0 0; font: 400 12px/1.5 var(--text); letter-spacing: .28em; text-transform: uppercase; color: var(--gold); }
+
+@media (max-width: 900px) {
+  .forecourt { grid-template-columns: 1fr; grid-template-rows: 46svh auto; }
+  .forecourt__lantern { top: 64px; height: 22svh; }
+  .forecourt__lantern--r { height: 18svh; }
+  .forecourt__scene::after { background: linear-gradient(rgba(23, 13, 9, 0) 60%, rgba(92, 26, 27, .7)); }
+  .forecourt__panel { padding: 36px 18px 44px; box-shadow: inset 0 3px 0 var(--gold); }
+  .jharokha { padding-top: 84px; }
+  .welcome__sub { font-size: 22px; }
 }
 
 /* Entrance, after the gate opens */
@@ -1416,7 +1429,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
-  .reveal, .in-1, .in-2, .in-3, .forecourt .plaque-arch { opacity: 1; transform: none; }
+  .reveal, .in-1, .in-2, .in-3, .forecourt .jharokha { opacity: 1; transform: none; }
   .write, .nm { clip-path: none !important; }
 }
 
@@ -1450,7 +1463,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .proom { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
 .proom__wall { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 .proom__view { position: absolute; z-index: 0; background-color: #2a1510; }
-.proom__view--maroon { background: radial-gradient(ellipse at 50% 45%, rgba(255, 238, 205, .25), rgba(255, 238, 205, 0) 70%), url("../assets/rooms/maroon-view.webp") 50% 36% / auto 150% no-repeat, #5c1a1b; }
+.proom__view--maroon { background: radial-gradient(ellipse at 50% 45%, rgba(255, 238, 205, .25), rgba(255, 238, 205, 0) 70%), url("../assets/rooms/maroon-view.webp") 19% 40% / auto 115% no-repeat, #5c1a1b; }
 .proom__view--green { background: radial-gradient(ellipse at 50% 60%, #35594a, #1F3A2E 72%); }
 .proom__door { position: absolute; z-index: 2; perspective: 1400px; }
 .proom .paraat { z-index: 3; position: absolute; }
