@@ -112,6 +112,40 @@
 
   /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
+  // Panelled plaster: mottled ground, a cornice, gilded mouldings and a dado rail.
+  function wallTile({ base, mottle, lower = true, panels = true }) {
+    const frame = (x, y, w, h) => `
+      <rect x="${x + 2}" y="${y + 3}" width="${w}" height="${h}" fill="none" stroke="rgba(20,8,6,.35)" stroke-width="7"/>
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="url(#g)" stroke-width="7"/>
+      <rect x="${x + 14}" y="${y + 14}" width="${w - 28}" height="${h - 28}" fill="none" stroke="url(#g)" stroke-width="2"/>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="1000" viewBox="0 0 400 1000">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0d9a4"/><stop offset=".45" stop-color="#c9a56b"/><stop offset="1" stop-color="#8f6c35"/></linearGradient>
+        <filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".011 .018" numOctaves="4" seed="7"/><feColorMatrix values="0 0 0 0 ${mottle[0]} 0 0 0 0 ${mottle[1]} 0 0 0 0 ${mottle[2]} 0 0 0 1.1 -.48"/></filter>
+      </defs>
+      <rect width="400" height="1000" fill="${base}"/>
+      <rect width="400" height="1000" filter="url(#n)"/>
+      <rect width="400" height="40" fill="rgba(255,248,235,.22)"/>
+      <g fill="url(#g)">${Array.from({ length: 20 }, (_, k) => `<rect x="${k * 20 + 4}" y="12" width="11" height="14"/>`).join("")}</g>
+      <rect y="40" width="400" height="5" fill="url(#g)"/><rect y="49" width="400" height="2" fill="url(#g)"/>
+      ${panels ? frame(42, 110, 316, lower ? 500 : 520) : ""}
+      ${panels ? `<g fill="url(#g)"><path d="M200 92l12 14-12 14-12-14z"/><circle cx="200" cy="106" r="4" fill="${base}"/></g>` : ""}
+      ${lower ? `<rect y="660" width="400" height="6" fill="url(#g)"/><rect y="672" width="400" height="2" fill="url(#g)"/>` : ""}
+      ${lower && panels ? frame(42, 712, 316, 240) : ""}
+    </svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  }
+  const WALLS = {
+    blush: wallTile({ base: "#e2c6bb", mottle: [0.72, 0.52, 0.48] }),
+    lacquer: wallTile({ base: "#5c1a1b", mottle: [0.22, 0.05, 0.06], lower: false }),
+    green: wallTile({ base: "#1f3a2e", mottle: [0.07, 0.16, 0.12] }),
+    mural: wallTile({ base: "#ece1cf", mottle: [0.82, 0.74, 0.62], lower: false, panels: false }),
+  };
+  $$("[data-wall]").forEach((el) => {
+    const kind = (el.closest(".scene").className.match(/scene--(\w+)/) || [])[1];
+    if (WALLS[kind]) el.style.backgroundImage = WALLS[kind];
+  });
+
   const corridor = $("#tour");
   const scenes = $$(".scene", corridor).map((el) => ({
     el,

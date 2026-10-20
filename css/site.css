@@ -461,10 +461,41 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .scene.is-live { visibility: visible; }
 /* The room is wider than the screen: the door waits round the corner, off to one side. */
 .scene__wall { position: absolute; left: -160%; right: -160%; top: -60%; bottom: var(--floor); }
-.scene--damask .scene__wall { background: var(--p-damask); background-color: var(--maroon); }
-.scene--harlequin .scene__wall { background: var(--p-harlequin); }
-.scene--vine .scene__wall { background: url("../assets/patterns/vine-green.svg") 0 0 / 195px 225px; background-color: var(--green); }
-.scene--lattice .scene__wall { background: var(--p-lattice); }
+/* Wall treatments — drawn in the palette, after gilded panelling, palace arcades and painted garden walls.
+   The panelled plaster itself is generated in js/site.js (wallTile). */
+.scene__wall { background-repeat: repeat-x; background-position: 0 100%; background-size: auto calc(100% / 1.6 + 1px); }
+.scene--blush .scene__wall { background-color: #e2c6bb; }
+.scene--lacquer .scene__wall { background-color: #561819; }
+.scene--green .scene__wall { background-color: #1d3529; }
+.scene--mural .scene__wall { background-color: #ece1cf; }
+/* A harlequin dado under the lacquer panels */
+.scene--lacquer .scene__wall::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100% / 1.6 * .3);
+  background: var(--p-harlequin);
+  background-size: 120px 110px;
+  border-top: 10px solid var(--gold);
+  box-shadow: 0 -3px 0 #8f6c35, inset 0 6px 14px rgba(20, 8, 6, .35);
+}
+/* The garden wall: painted niches, lotus stems and vine sprigs */
+.scene--mural .scene__wall::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100% / 1.6);
+  background:
+    url("../assets/motifs/vine-sprig.svg") 70px 100% / auto 34% repeat-x,
+    url("../assets/motifs/bloom-stem.svg") 260px 100% / auto 26% repeat-x,
+    url("../assets/motifs/bloom-stem.svg") 470px 100% / auto 40% repeat-x,
+    url("../assets/motifs/arch-green.svg") 0 32% / auto 54% space no-repeat;
+  opacity: .92;
+}
 .scene__wall::after {
   /* skirting where the wall meets the floor, and a little shade toward the ceiling */
   content: "";
