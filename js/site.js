@@ -112,6 +112,77 @@
 
   /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
+  // Petals drifting down, and gold dust rising in the lantern light.
+  const PETALS = {
+    jasmine: { n: 14, colours: ["#fbf7ee"], cls: "petal petal--jasmine", w: [8, 12] },
+    garden: { n: 26, colours: ["#7a1f26", "#9e5a5c", "#c9a56b", "#e2a33a", "#7a1f26"], cls: "petal", w: [10, 17] },
+    rose: { n: 18, colours: ["#7a1f26", "#9e5a5c", "#7a1f26"], cls: "petal", w: [11, 16] },
+  };
+  const rand = (a, b) => a + Math.random() * (b - a);
+  if (!reduceMotion) {
+    $$("[data-petals]").forEach((el) => {
+      const cfg = PETALS[el.dataset.petals];
+      for (let k = 0; k < cfg.n; k++) {
+        const p = document.createElement("i");
+        p.className = cfg.cls;
+        p.style.cssText = `left:${rand(-5, 100).toFixed(1)}%;--w:${rand(...cfg.w).toFixed(1)}px;--c:${cfg.colours[k % cfg.colours.length]};--d:${rand(10, 18).toFixed(1)}s;--delay:${rand(-18, 0).toFixed(1)}s;--x:${rand(-90, 120).toFixed(0)}px`;
+        el.appendChild(p);
+      }
+    });
+    $$("[data-motes]").forEach((el) => {
+      for (let k = 0; k < 34; k++) {
+        const m = document.createElement("i");
+        m.className = "mote";
+        m.style.cssText = `left:${rand(0, 100).toFixed(1)}%;--w:${rand(1.5, 4).toFixed(1)}px;--d:${rand(12, 22).toFixed(1)}s;--delay:${rand(-22, 0).toFixed(1)}s;--x:${rand(-60, 60).toFixed(0)}px`;
+        el.appendChild(m);
+      }
+    });
+  }
+
+  // The paraat: a shallow brass platter of water with marigolds, roses and jasmine turning on it.
+  const flower = (x, y, kind, r) => {
+    if (kind === "marigold") {
+      const ring = (n, rr, c) => Array.from({ length: n }, (_, k) => {
+        const a = (k / n) * Math.PI * 2;
+        return `<circle cx="${(x + Math.cos(a) * rr).toFixed(1)}" cy="${(y + Math.sin(a) * rr).toFixed(1)}" r="${(r * 0.42).toFixed(1)}" fill="${c}"/>`;
+      }).join("");
+      return `<g class="bob">${ring(12, r * 0.78, "#d9831e")}${ring(9, r * 0.5, "#e9a531")}<circle cx="${x}" cy="${y}" r="${r * 0.36}" fill="#f2bf4a"/></g>`;
+    }
+    if (kind === "rose") {
+      const pet = (a, rr, c) => `<ellipse cx="${(x + Math.cos(a) * rr).toFixed(1)}" cy="${(y + Math.sin(a) * rr).toFixed(1)}" rx="${(r * 0.55).toFixed(1)}" ry="${(r * 0.4).toFixed(1)}" transform="rotate(${(a * 57.3).toFixed(0)} ${(x + Math.cos(a) * rr).toFixed(1)} ${(y + Math.sin(a) * rr).toFixed(1)})" fill="${c}"/>`;
+      return `<g class="bob">${[0, 1.26, 2.51, 3.77, 5.03].map((a) => pet(a, r * 0.55, "#7a1f26")).join("")}${[0.6, 2.7, 4.6].map((a) => pet(a, r * 0.25, "#9b2f37")).join("")}<circle cx="${x}" cy="${y}" r="${r * 0.2}" fill="#c9a56b"/></g>`;
+    }
+    return `<g class="bob">${[0, 1.26, 2.51, 3.77, 5.03].map((a) => `<ellipse cx="${(x + Math.cos(a) * r * 0.5).toFixed(1)}" cy="${(y + Math.sin(a) * r * 0.5).toFixed(1)}" rx="${(r * 0.5).toFixed(1)}" ry="${(r * 0.26).toFixed(1)}" transform="rotate(${(a * 57.3).toFixed(0)} ${(x + Math.cos(a) * r * 0.5).toFixed(1)} ${(y + Math.sin(a) * r * 0.5).toFixed(1)})" fill="#fbf7ee"/>`).join("")}<circle cx="${x}" cy="${y}" r="${r * 0.16}" fill="#e9c46a"/></g>`;
+  };
+  const kinds = ["marigold", "rose", "jasmine", "marigold", "rose", "marigold", "jasmine", "rose", "marigold", "jasmine", "marigold", "rose"];
+  const flowers = kinds.map((k, i) => {
+    const a = i * 2.39996, d = 40 + 150 * Math.sqrt((i + 0.5) / kinds.length); // spread evenly over the water
+    return flower(Math.cos(a) * d, Math.sin(a) * d, k, k === "jasmine" ? 15 : 22);
+  }).join("");
+  const loose = Array.from({ length: 18 }, (_, i) => {
+    const a = i * 1.7, d = 60 + (i * 37) % 150;
+    return `<ellipse cx="${(Math.cos(a) * d).toFixed(0)}" cy="${(Math.sin(a) * d).toFixed(0)}" rx="7" ry="4.5" transform="rotate(${i * 40} ${(Math.cos(a) * d).toFixed(0)} ${(Math.sin(a) * d).toFixed(0)})" fill="${i % 3 ? "#7a1f26" : "#e2a33a"}" opacity=".9"/>`;
+  }).join("");
+  const PARAAT = `<svg viewBox="-310 -20 620 250" aria-hidden="true">
+    <defs>
+      <linearGradient id="brass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a5a26"/><stop offset=".25" stop-color="#e6c37c"/><stop offset=".5" stop-color="#c9a56b"/><stop offset=".78" stop-color="#f1d9a0"/><stop offset="1" stop-color="#6e4f1f"/></linearGradient>
+      <linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8b26e"/><stop offset="1" stop-color="#6e4f1f"/></linearGradient>
+      <radialGradient id="water" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#4b3a24"/><stop offset=".7" stop-color="#2c2216"/><stop offset="1" stop-color="#1b140c"/></radialGradient>
+      <clipPath id="pool"><ellipse cx="0" cy="96" rx="250" ry="76"/></clipPath>
+    </defs>
+    <path d="M-300 100 A300 92 0 0 0 300 100 L300 124 A300 92 0 0 1 -300 124Z" fill="url(#band)"/>
+    <ellipse cx="0" cy="100" rx="300" ry="92" fill="url(#brass)"/>
+    <ellipse cx="0" cy="100" rx="300" ry="92" fill="none" stroke="#5c421a" stroke-width="1.5"/>
+    <g fill="#7a5a26">${Array.from({ length: 40 }, (_, k) => { const a = (k / 40) * Math.PI * 2; return `<circle cx="${(Math.cos(a) * 280).toFixed(1)}" cy="${(100 + Math.sin(a) * 85).toFixed(1)}" r="2.2"/>`; }).join("")}</g>
+    <ellipse cx="0" cy="98" rx="262" ry="80" fill="#8a6a30"/>
+    <ellipse cx="0" cy="96" rx="250" ry="76" fill="url(#water)"/>
+    <g clip-path="url(#pool)">
+      <ellipse cx="-60" cy="70" rx="140" ry="14" fill="rgba(255,226,160,.16)"/>
+      <g transform="translate(0 96) scale(1 .3)"><g class="swirl">${loose}${flowers}</g></g>
+    </g>
+  </svg>`;
+  $$("[data-paraat]").forEach((el) => { el.innerHTML = PARAAT; });
+
   // Panelled plaster: mottled ground, a cornice, gilded mouldings and a dado rail.
   function wallTile({ base, mottle, lower = true, panels = true }) {
     const frame = (x, y, w, h) => `
@@ -209,7 +280,7 @@
       sc.el.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) rotateY(${swing.toFixed(2)}deg) scale(${s.toFixed(4)})`;
       sc.el.style.opacity = o.toFixed(3);
       sc.el.classList.toggle("is-live", o > 0.001);
-      sc.el.classList.toggle("is-info", t > -0.08 && t < 0.45);
+      if (t > -0.08) sc.el.classList.add("is-info"); // the words stay on the wall once they appear
       if (sc.seal && t > -0.08 && !sc.seal.classList.contains("is-drawn")) {
         sc.seal.classList.add("is-drawn");
         setTimeout(() => sc.seal.classList.add("is-parted"), 2600);
