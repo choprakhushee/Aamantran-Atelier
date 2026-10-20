@@ -1520,3 +1520,31 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .proom .proom__words--ink .inscription__rule { background: var(--gold-deep); }
 .proom.proom--greenroom .proom__tag .inscription__title { color: var(--maroon); }
 .proom.proom--greenroom .proom__tag .inscription__small, .proom.proom--greenroom .proom__tag .inscription__text { color: var(--cocoa); }
+
+/* ---------- Homepage: the jharokha stands in the courtyard ---------- */
+.forecourt { grid-template-columns: 1fr; place-items: center; }
+.forecourt__scene { position: absolute; inset: 0; }
+.forecourt__bg { object-position: 50% 55%; }
+.forecourt__scene::after { background: radial-gradient(ellipse 34% 60% at 50% 48%, rgba(23, 13, 9, .28), rgba(23, 13, 9, 0) 70%), linear-gradient(rgba(23, 13, 9, .18), rgba(23, 13, 9, 0) 25%, rgba(23, 13, 9, 0) 80%, rgba(23, 13, 9, .3)); }
+.forecourt__lantern--l { left: 4vw; }
+.forecourt__lantern--r { right: 4vw; }
+.forecourt__panel { position: relative; z-index: 3; padding: 110px 20px 70px; background: transparent; box-shadow: none; }
+.forecourt .jharokha { width: min(440px, 86vw); filter: drop-shadow(0 30px 50px rgba(10, 4, 3, .55)); }
+.forecourt .jharokha::before { background: linear-gradient(#f0d9a4, var(--gold) 45%, #8f6c35); }
+.forecourt .jharokha::after { background: #5c1a1b; }
+.nav__links a.nav__book::before, .nav__links a.nav__book::after { display: none; }
+.nav__links .nav__book { margin-left: 22px; padding: 12px 18px; border: 1px solid var(--maroon); border-radius: var(--radius-sm); font: 400 11px/1 var(--text); letter-spacing: .24em; text-transform: uppercase; text-decoration: none; color: var(--maroon); white-space: nowrap; transition: background-color .8s var(--ease), color .8s var(--ease); }
+.nav__links .nav__book:hover { background: var(--maroon); color: var(--linen); }
+@media (max-width: 1100px) { .nav__book { display: none; } }
+@media (max-width: 900px) {
+  .forecourt { grid-template-rows: none; min-height: 100svh; }
+  .forecourt__bg { object-position: 50% 60%; }
+  .forecourt__panel { padding: 96px 16px 40px; }
+}
+
+/* the homepage petals fall freely (the corridor's only fall while their room is on screen) */
+.forecourt .petal { animation-play-state: running; }
+.forecourt .jharokha { width: min(470px, 88vw); padding-bottom: 48px !important; }
+.forecourt .jharokha__word { font-size: clamp(24px, 2.2vw, 36px); }
+.forecourt .jharokha__cta { margin-top: 28px; }
+@media (max-width: 900px) { .forecourt .jharokha__word { font-size: 24px; } .forecourt .jharokha__cta { padding: 16px 22px; } }
