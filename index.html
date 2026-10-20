@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/art/entrance.webp">
   <link rel="apple-touch-icon" href="assets/logos/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/site.css?v=23">
+  <link rel="stylesheet" href="css/site.css?v=26">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Aamantran Atelier","description":"Moving video invitations and wedding websites for Indian weddings.","email":"aamantranatelier@gmail.com","areaServed":"IN","sameAs":["https://www.instagram.com/aamantran.atelier/"],"image":"https://choprakhushee.github.io/Aamantran-Atelier/assets/og.jpg"}</script>
 </head>
 <body class="is-gate">
@@ -68,33 +68,36 @@
 
   <main id="top">
 
-    <!-- ===================== FORECOURT ===================== -->
-    <section class="forecourt room" id="forecourt" data-tone="linen">
-      <div class="forecourt__edge" aria-hidden="true"></div>
-      <div class="forecourt__body">
-        <div class="forecourt__copy">
-          <p class="eyebrow in-1">Invitations, written in light and motion</p>
-          <h1 class="forecourt__title">
-            <span class="sr">Your story, unfolding</span>
-            <span class="write" aria-hidden="true">Your story,</span>
-            <span class="write write--2" aria-hidden="true">unfolding</span>
-          </h1>
-          <p class="forecourt__sub in-2">Moving video invitations and wedding websites for Indian weddings, designed with care and opened by your guests like doors to a palace.</p>
-          <div class="forecourt__actions in-3">
-            <a class="btn" href="#enquire">Enquire</a>
-            <a class="link" href="#tour">Begin the tour <span aria-hidden="true">↓</span></a>
-          </div>
-          <p class="forecourt__season in-3">Enquiries are open for the 2026–27 season</p>
-        </div>
+    <!-- ===================== FORECOURT =====================
+         The arrival: the courtyard at golden hour, and the house introduced on its plaque. -->
+    <section class="forecourt room" id="forecourt" data-tone="dark">
+      <div class="forecourt__scene" aria-hidden="true">
+        <img class="forecourt__bg" src="assets/art/hero.webp" alt="" fetchpriority="high">
+        <img class="forecourt__lantern forecourt__lantern--l" src="assets/art/lantern-2.webp" alt="">
+        <img class="forecourt__lantern forecourt__lantern--r" src="assets/art/lantern-3.webp" alt="">
+        <div class="motes forecourt__petals" data-petals="rose"></div>
+      </div>
 
-        <!-- Hero arch. An illustration at assets/art/hero.webp appears here automatically. -->
-        <figure class="hero-arch" id="heroArch" aria-hidden="true">
-          <div class="hero-arch__frame">
-            <div class="hero-arch__ground"></div>
-            <img class="hero-arch__art" src="assets/art/hero.webp" alt="" onerror="this.remove()" onload="this.closest('.hero-arch').classList.add('has-art')">
-            <div class="hero-arch__tag"><div class="hero-arch__seal" data-chhatri></div></div>
-          </div>
-        </figure>
+      <div class="plaque-arch">
+        <img class="plaque-arch__a in-1" src="assets/logos/a-emblem-gold.webp" alt="" width="96" height="94">
+        <p class="plaque-arch__word in-1">AAMANTRAN</p>
+        <p class="plaque-arch__desc in-1">· ATELIER ·</p>
+        <span class="plaque-arch__rule in-2" aria-hidden="true"></span>
+        <h1 class="forecourt__title">
+          <span class="sr">Aamantran Atelier. Your story, unfolding.</span>
+          <span class="write" aria-hidden="true">Your story,</span>
+          <span class="write write--2" aria-hidden="true">unfolding</span>
+        </h1>
+        <p class="plaque-arch__meaning in-2"><span lang="hi">आमंत्रण</span> · <em>aamantran</em>, an invitation</p>
+      </div>
+
+      <div class="forecourt__foot">
+        <p class="forecourt__sub in-2">Moving video invitations and wedding websites for Indian weddings, designed with care and opened by your guests like doors to a palace.</p>
+        <div class="forecourt__actions in-3">
+          <a class="btn btn--gold" href="#enquire">Enquire</a>
+          <a class="btn btn--ghost" href="#tour">Begin the tour <span aria-hidden="true">↓</span></a>
+        </div>
+        <p class="forecourt__season in-3">Enquiries are open for the 2026–27 season</p>
       </div>
     </section>
 
@@ -104,62 +107,46 @@
     <section class="corridor room" id="tour" data-tone="dark" aria-label="A tour through the atelier">
       <div class="corridor__sticky" id="corridorStage">
 
-        <div class="scene scene--blush" data-door="right">
-          <div class="scene__wall" data-wall></div>
-          <div class="scene__floor"></div>
-          <div class="inscription inscription--blush">
-            <p class="inscription__dev" lang="hi">पधारिए</p>
-            <p class="inscription__small">Please, come in</p>
-            <span class="inscription__rule"></span>
-            <p class="inscription__text">Every wedding begins with an invitation. We make the one your family keeps.</p>
+        <!-- Painted rooms. Everything inside .room is placed in the painting's own pixels (data-w × data-h),
+             so the words, the doorway and the camera all stay locked to the architecture. -->
+        <div class="scene scene--painted" data-w="1672" data-h="941" data-door="612,50,448,727" data-keys="210,330;1462,330">
+          <div class="proom" style="width:1672px;height:941px">
+            <div class="proom__view proom__view--maroon"></div>
+            <img class="proom__wall" src="assets/rooms/cream-wall.webp" alt="" width="1672" height="941">
+            <div class="proom__door"><img class="leaf leaf--l" src="assets/rooms/cream-door-l.webp" alt=""><img class="leaf leaf--r" src="assets/rooms/cream-door-r.webp" alt=""></div>
+            <div class="paraat" data-paraat style="left:260px;top:806px;width:300px;bottom:auto"></div>
+            <div class="tag proom__tag" style="left:210px;top:330px;width:250px">
+              <p class="inscription__dev" lang="hi">पधारिए</p>
+              <p class="inscription__small" data-greet>Please, come in</p>
+            </div>
+            <div class="tag proom__tag" style="left:1462px;top:330px;width:250px">
+              <span class="inscription__rule"></span>
+              <p class="inscription__text">Every wedding begins with an invitation. We make the one your family keeps.</p>
+              <span class="inscription__rule"></span>
+            </div>
           </div>
-          <div class="motes motes--jasmine" data-petals="jasmine"></div>
-          <div class="paraat" data-paraat></div>
-          <img class="scene__lantern" src="assets/art/lantern-2.webp" alt="" aria-hidden="true">
-          <div class="doorway doorway--green">
-            <div class="doorway__frame"><span></span><i></i></div>
-            <div class="doorway__view"></div>
-            <img class="leaf leaf--l" src="assets/art/door-green-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-green-r.webp" alt="">
-            <span class="doorway__step"></span>
-          </div>
+          <div class="motes" data-petals="jasmine"></div>
         </div>
 
-        <div class="scene scene--lacquer" data-door="left">
-          <div class="scene__wall" data-wall></div>
-          <div class="scene__floor"></div>
-          <div class="inscription inscription--lacquer">
-            <p class="inscription__small">Personal</p>
-            <h3 class="inscription__title">Made for your family</h3>
-            <span class="inscription__rule"></span>
-            <p class="inscription__text">Your names, your functions, your colours, your story. Whether you choose a ready design or something entirely new, it becomes yours.</p>
+        <div class="scene scene--painted" data-w="1983" data-h="793" data-door="793,49,399,600" data-keys="485,330;1497,330">
+          <div class="proom" style="width:1983px;height:793px">
+            <div class="proom__view proom__view--green"></div>
+            <img class="proom__wall" src="assets/rooms/maroon-wall.webp" alt="" width="1983" height="793">
+            <div class="proom__door"><img class="leaf leaf--l" src="assets/rooms/maroon-door-l.webp" alt=""><img class="leaf leaf--r" src="assets/rooms/maroon-door-r.webp" alt=""></div>
+            <div class="proom__words" style="left:485px;top:330px;width:330px">
+              <p class="inscription__small">Personal</p>
+              <h3 class="inscription__title">Made for your family</h3>
+              <span class="inscription__rule"></span>
+              <p class="inscription__text">Your names, your functions, your colours, your story. Whether you choose a ready design or something entirely new, it becomes yours.</p>
+            </div>
+            <div class="proom__words" style="left:1497px;top:330px;width:330px">
+              <p class="inscription__small">Cinematic</p>
+              <h3 class="inscription__title">Written in light and motion</h3>
+              <span class="inscription__rule"></span>
+              <p class="inscription__text">Doors part, petals fall, lanterns sway. Every invitation has its reveal, timed to your music.</p>
+            </div>
           </div>
           <div class="motes" data-motes></div>
-          <img class="scene__lantern" src="assets/art/lantern-3.webp" alt="" aria-hidden="true">
-          <div class="doorway">
-            <div class="doorway__frame"><span></span><i></i></div>
-            <div class="doorway__view"></div>
-            <img class="leaf leaf--l" src="assets/art/door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/door-r.webp" alt="">
-            <span class="doorway__step"></span>
-          </div>
-        </div>
-
-        <div class="scene scene--mural" data-door="right">
-          <div class="scene__wall" data-wall></div>
-          <div class="scene__floor"></div>
-          <div class="inscription inscription--mural">
-            <p class="inscription__small">Cinematic</p>
-            <h3 class="inscription__title inscription__title--narrow">Written in light and motion</h3>
-            <span class="inscription__rule"></span>
-            <p class="inscription__text">Doors part, petals fall, lanterns sway. Every invitation has its reveal, timed to your music.</p>
-          </div>
-          <div class="motes" data-petals="garden"></div>
-          <img class="scene__lantern" src="assets/art/lantern-1.webp" alt="" aria-hidden="true">
-          <div class="doorway doorway--floral">
-            <div class="doorway__frame"><span></span><i></i></div>
-            <div class="doorway__view"></div>
-            <img class="leaf leaf--l" src="assets/art/gate-door-l.webp" alt=""><img class="leaf leaf--r" src="assets/art/gate-door-r.webp" alt="">
-            <span class="doorway__step"></span>
-          </div>
         </div>
 
         <div class="scene scene--green" data-door="left">
@@ -528,6 +515,6 @@
     <div class="endcard__lattice" aria-hidden="true"></div>
   </footer>
 
-  <script src="js/site.js?v=23"></script>
+  <script src="js/site.js?v=26"></script>
 </body>
 </html>

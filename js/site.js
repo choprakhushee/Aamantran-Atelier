@@ -232,6 +232,7 @@
   sceneEls.forEach((sc, i) => {
     const next = sceneEls[i + 1] ? (sceneEls[i + 1].className.match(/scene--(\w+)/) || [])[1] : "darbar";
     const view = $(".doorway__view", sc);
+    if (!view) return;
     if (view && VIEWS[next]) view.style.background = VIEWS[next];
   });
   // The plaster itself: a small mottled tile under each wall's layout.
@@ -253,6 +254,7 @@
     $$(".scene").forEach((scene) => {
       const kind = (scene.className.match(/scene--(\w+)/) || [])[1];
       const wall = $(".scene__wall", scene), door = $(".doorway", scene);
+      if (!wall || !door) return;
       const ins = $(".inscription", scene), lantern = $(".scene__lantern", scene);
       const vw = scene.offsetWidth;
       const wx = wall.offsetLeft, wy = wall.offsetTop, W = wall.offsetWidth, H = wall.offsetHeight;
@@ -335,7 +337,13 @@
   const corridor = $("#tour");
   const scenes = $$(".scene", corridor).map((el) => ({
     el,
-    door: $(".doorway", el),
+    painted: el.classList.contains("scene--painted"),
+    room: $(".proom", el),
+    W: +el.dataset.w || 0,
+    H: +el.dataset.h || 0,
+    doorRect: (el.dataset.door || "").split(",").map(Number),
+    keys: (el.dataset.keys || "").split(";").filter(Boolean).map((k) => k.split(",").map(Number)),
+    door: $(".doorway", el) || $(".proom__door", el),
     leaves: $$(".leaf", el),
     seal: $(".scene__seal", el),
     cx: 0,
@@ -345,8 +353,38 @@
   const hint = $("#corridorHint");
   const finale = $("#darbarFinale");
 
+  // Painted rooms: place the doorway, its view and the leaves in the painting's own pixels.
+  scenes.filter((sc) => sc.painted).forEach((sc) => {
+    const [x, y, w, h] = sc.doorRect;
+    [$(".proom__door", sc.el), $(".proom__view", sc.el)].forEach((el) => Object.assign(el.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" }));
+  });
+
+  // The camera in a painted room: arrive, look along the wall at each inscription in turn,
+  // turn to the door and walk up to it; the doors open and you step through.
+  function renderPainted(sc, t, vw, vh, arrive, open, through) {
+    const [dx, dy, dw, dh] = sc.doorRect;
+    const s0 = Math.max(vw / sc.W, vh / sc.H);                // the painting covers the screen
+    const door = [dx + dw / 2, dy + dh * 0.52];
+    const pts = [...sc.keys, door];
+    const a = clamp((t - 0.02) / 0.6, 0, 1) * (pts.length - 1);
+    const k = Math.min(Math.floor(a), pts.length - 2), f = smooth(a - k);
+    const fx = pts[k][0] + (pts[k + 1][0] - pts[k][0]) * f;
+    const fy = pts[k][1] + (pts[k + 1][1] - pts[k][1]) * f;
+    const zd = Math.max(1, Math.min(2.2, (0.82 * vh) / (dh * s0)));
+    const near = k === pts.length - 2 ? f : 0;                // zoom in only on the way to the door
+    const z = (1.1 - 0.1 * arrive) * (1 + (zd - 1) * near) * (1 + 3 * through);
+    const S = s0 * z;
+    let tx = vw / 2 - fx * S, ty = vh / 2 - fy * S;
+    if (through < 0.001) {                                    // keep the painting filling the screen
+      tx = clamp(tx, vw - sc.W * S, 0);
+      ty = clamp(ty, vh - sc.H * S, 0);
+    }
+    sc.room.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${S.toFixed(4)})`;
+    sc.el.style.transform = "";
+  }
+
   function measureCorridor() {
-    scenes.forEach((sc) => {
+    scenes.filter((sc) => !sc.painted).forEach((sc) => {
       sc.cx = sc.door.offsetLeft + sc.door.offsetWidth / 2;
       sc.cy = sc.door.offsetTop + sc.door.offsetHeight / 2;
       sc.el.style.transformOrigin = `${sc.cx}px ${sc.cy}px`;
@@ -373,6 +411,9 @@
       const leave = i === n - 1 ? 1 : 1 - smooth((t - 0.97) / 0.03);
       const o = Math.min(arrive, leave);
 
+      if (sc.painted) {
+        renderPainted(sc, t, vw, vh, arrive, open, through);
+      } else {
       const tx = (vw / 2 - sc.cx) * turn;
       const ty = (vh / 2 - sc.cy) * 0.55 * turn;
       const s = (1.12 - 0.12 * arrive) * (1 + 0.3 * near) * (1 + 3 * through);
@@ -380,6 +421,7 @@
       const dir = sc.el.dataset.door === "left" ? -1 : 1;
       const swing = -dir * 9 * Math.sin(Math.PI * turn);
       sc.el.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) rotateY(${swing.toFixed(2)}deg) scale(${s.toFixed(4)})`;
+      }
       sc.el.style.opacity = o.toFixed(3);
       sc.el.classList.toggle("is-live", o > 0.001);
       if (t > -0.08) sc.el.classList.add("is-info"); // the words stay on the wall once they appear
@@ -666,7 +708,7 @@
     const nm1 = $(".nm--1", liveStage), nm2 = $(".nm--2", liveStage);
     if (nm1) nm1.textContent = a;
     if (nm2 && b) nm2.innerHTML = `<span class="amp">&amp;</span> ${esc(b)}`;
-    const welcome = $(".inscription--blush .inscription__small");
+    const welcome = $("[data-greet]");
     if (welcome) welcome.textContent = b ? `${a} and ${b}, please come in` : `${a}, please come in`;
     if ($("#f-name")) $("#f-name").value = a;
     if (b && $("#f-partner")) $("#f-partner").value = b;
@@ -675,6 +717,7 @@
   /* ---------- Nav, palace plan, journey line ---------- */
 
   const nav = $("#nav");
+  const heroBg = $(".forecourt__bg");
   const plan = $("#plan");
   const planItems = $$("li", plan);
   const toned = $$("[data-tone]");
@@ -706,6 +749,7 @@
     const sr = steps.getBoundingClientRect();
     steps.style.setProperty("--p", clamp((vh * 0.85 - sr.top) / (sr.height + vh * 0.2), 0, 1).toFixed(3));
 
+    if (y < vh * 1.2 && !reduceMotion) heroBg.style.setProperty("--hy", (y * 0.35).toFixed(1) + "px"); // the courtyard stays behind as you walk on
     renderCorridor();
     renderWall();
     ticking = false;

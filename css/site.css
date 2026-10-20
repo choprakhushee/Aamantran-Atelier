@@ -362,101 +362,102 @@ body.is-gate .nav { transform: translateY(-105%); }
 body.is-gate .plan { opacity: 0; }
 @media (max-width: 1100px) { .plan { display: none; } }
 
-/* ---------- Forecourt ---------- */
+/* ---------- Forecourt: the courtyard you step into from the gate ---------- */
 
 .forecourt {
   position: relative;
-  min-height: 100svh;
+  min-height: max(100svh, 760px);
   display: grid;
-  grid-template-columns: clamp(60px, 14vw, 240px) 1fr;
-  background: var(--linen);
-  overflow: hidden;
-}
-.forecourt__edge {
-  background: var(--p-harlequin);
-  border-right: 3px solid var(--gold);
-  animation: drift 60s linear infinite;
-}
-.forecourt__body {
-  display: grid;
-  grid-template-columns: 1.1fr .9fr;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
   align-items: center;
-  gap: 5vw;
-  padding: 130px var(--gutter) 90px;
+  padding: 110px var(--gutter) 46px;
+  overflow: hidden;
+  background: #2a1510;
+  color: var(--linen);
+  isolation: isolate;
 }
-.forecourt__title { margin: 6px 0 0; font-weight: 400; }
+.forecourt__scene { position: absolute; inset: 0; z-index: -1; }
+.forecourt__bg {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  object-fit: cover;
+  object-position: 50% 62%;
+  transform: translateY(var(--hy, 0px)) scale(1.06);
+  animation: courtyard 30s var(--ease) infinite alternate;
+}
+.forecourt__scene::after {
+  /* dusk settling at the edges, so the plaque and the words hold their own */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 44%, rgba(42, 21, 16, 0) 30%, rgba(42, 21, 16, .5) 100%),
+    linear-gradient(rgba(23, 13, 9, .45), rgba(23, 13, 9, 0) 28%, rgba(23, 13, 9, 0) 55%, rgba(23, 13, 9, .82));
+}
+.forecourt__lantern {
+  position: absolute;
+  top: -2vh;
+  height: min(46svh, 520px);
+  transform-origin: 50% 0;
+  animation: sway 5s var(--ease) infinite alternate;
+  filter: drop-shadow(0 0 46px rgba(255, 196, 110, .6));
+}
+.forecourt__lantern--l { left: 7vw; }
+.forecourt__lantern--r { right: 7vw; height: min(38svh, 430px); animation-delay: -2.4s; animation-duration: 5.6s; }
+.forecourt__petals { z-index: 2; }
+@keyframes courtyard { to { transform: translateY(var(--hy, 0px)) scale(1.14); } }
+
+/* the plaque at the heart of the courtyard: the house, introduced */
+.plaque-arch {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: min(520px, 86vw);
+  padding: clamp(84px, 10vh, 118px) clamp(28px, 4vw, 54px) clamp(36px, 5vh, 56px);
+  text-align: center;
+  background: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
+  filter: drop-shadow(0 30px 50px rgba(10, 4, 3, .55));
+}
+.plaque-arch__a { width: clamp(64px, 7vw, 92px); height: auto; }
+.plaque-arch__word { margin: 18px 0 0; font: 400 clamp(32px, 4.2vw, 56px)/1 var(--display); letter-spacing: .2em; padding-left: .2em; color: var(--linen); }
+.plaque-arch__desc { margin: 12px 0 0; font: 400 clamp(12px, 1.3vw, 16px)/1 var(--display); letter-spacing: .5em; padding-left: .5em; color: var(--gold); }
+.plaque-arch__rule { display: block; width: 76px; height: 1px; margin: 26px 0 8px; background: var(--gold); }
+.forecourt__title { margin: 0; font-weight: 400; }
 .write {
   display: block;
-  font: 400 clamp(64px, 8.6vw, 150px)/1 var(--script);
-  color: var(--maroon);
-  padding: 0 .25em .12em 0;
-  margin-left: -.05em;
+  font: 400 clamp(46px, 5.4vw, 82px)/1.02 var(--script);
+  color: var(--gold);
+  padding: 0 .25em .12em;
   clip-path: inset(-20% 100% -30% 0);
 }
-.write--2 { margin-top: -.12em; padding-left: .7em; }
-.forecourt__sub { max-width: 30em; margin: 30px 0 0; font-size: clamp(17px, 1.35vw, 20px); color: var(--cocoa); }
-.forecourt__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 34px; margin-top: 40px; }
-.forecourt__season {
-  margin: 52px 0 0;
-  font: 400 11px/1.5 var(--text);
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--gold-deep);
-}
-.forecourt__season::before { content: "—"; margin-right: 12px; color: var(--gold); }
+.write--2 { margin-top: -.14em; padding-left: 1.1em; }
+.plaque-arch__meaning { margin: 14px 0 0; font: 300 14px/1.4 var(--text); letter-spacing: .08em; color: rgba(242, 233, 225, .82); }
+.plaque-arch__meaning span[lang="hi"] { font-family: var(--dev); font-size: 18px; color: var(--gold); letter-spacing: 0; }
 
-/* The hero arch: a chhatri-arch frame — gold line, then the room behind it. */
-.hero-arch {
-  position: relative;
-  justify-self: center;
-  width: min(100%, 460px, 56vh);
-  margin: 0;
-  opacity: 0;
-  transform: translateY(30px) scale(.97);
-  transition: opacity 1.6s var(--ease), transform 1.8s var(--ease);
-}
-.hero-arch__frame {
-  position: relative;
-  aspect-ratio: 4 / 5;
-  background: var(--gold);
-  -webkit-mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-  mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-}
-.hero-arch__ground, .hero-arch__art {
-  position: absolute;
-  inset: 8px;
-  -webkit-mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-  mask: url("../assets/motifs/arch-maroon.svg") center / 100% 100% no-repeat;
-}
-.hero-arch__ground { background: var(--p-damask); background-color: var(--maroon); animation: rise 50s linear infinite; }
-.hero-arch__art { width: calc(100% - 16px); height: calc(100% - 16px); object-fit: cover; }
-.hero-arch__tag {
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  width: 46%;
-  padding: 12px;
-  transform: translate(-50%, -50%);
-  background: var(--blush);
-  box-shadow: var(--shadow-tag);
-}
-.hero-arch__seal { padding: 18px 13% 14px; background: var(--maroon); }
-.hero-arch.has-art .hero-arch__tag, .hero-arch.has-art .hero-arch__ground { display: none; }
+.forecourt__foot { display: grid; justify-items: center; text-align: center; margin-top: 34px; }
+.forecourt__sub { max-width: 34em; margin: 0; font-size: clamp(16px, 1.3vw, 19px); color: rgba(242, 233, 225, .9); text-shadow: 0 1px 12px rgba(10, 4, 3, .6); }
+.forecourt__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 26px; }
+.btn--gold { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+.btn--gold:hover { background: transparent; color: var(--gold); }
+.btn--ghost { background: rgba(23, 13, 9, .35); border-color: rgba(242, 233, 225, .7); color: var(--linen); }
+.btn--ghost:hover { background: var(--linen); color: var(--maroon); }
+.forecourt__season { margin: 24px 0 0; font: 400 11px/1.5 var(--text); letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
+.forecourt .plaque-arch { opacity: 0; transform: translateY(26px) scale(.97); transition: opacity 1.6s var(--ease), transform 1.8s var(--ease); }
+body.is-entering .forecourt .plaque-arch { opacity: 1; transform: none; transition-delay: 2s; }
 
-@media (max-width: 900px) {
-  .forecourt__body { grid-template-columns: 1fr; padding-top: 120px; gap: 60px; }
-  .hero-arch { width: min(78vw, 360px); }
-}
 @media (max-width: 700px) {
-  .forecourt { grid-template-columns: 1fr; grid-template-rows: 56px 1fr; padding-top: 68px; }
-  .forecourt__edge { border-right: 0; border-bottom: 3px solid var(--gold); background-size: 120px 110px; }
-  .forecourt__body { padding-top: 48px; }
-  .write--2 { padding-left: .4em; }
+  .forecourt { padding: 96px 16px 30px; }
+  .forecourt__lantern { height: 22svh; }
+  .forecourt__lantern--l { left: -2vw; }
+  .forecourt__lantern--r { right: -2vw; height: 18svh; }
+  .plaque-arch { padding-top: 70px; }
 }
 
 /* Entrance, after the gate opens */
 .in-1, .in-2, .in-3 { opacity: 0; transform: translateY(16px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
-body.is-entering .hero-arch { opacity: 1; transform: none; transition-delay: 2.2s; }
 body.is-entering .in-1 { opacity: 1; transform: none; transition-delay: 2.3s; }
 body.is-entering .write { animation: write 1.5s var(--ease) 2.6s forwards; }
 body.is-entering .write--2 { animation-delay: 3.5s; }
@@ -465,7 +466,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 
 /* ---------- The corridor: four rooms, each with a door to walk through ---------- */
 
-.corridor { position: relative; height: 700vh; background: #140c0a; }
+.corridor { position: relative; height: 600vh; background: #140c0a; }
 .corridor__anchor { position: absolute; left: 0; top: calc(100% - 130svh); }
 .corridor__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; perspective: 1400px; }
 
@@ -1415,7 +1416,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
-  .reveal, .in-1, .in-2, .in-3, .hero-arch { opacity: 1; transform: none; }
+  .reveal, .in-1, .in-2, .in-3, .forecourt .plaque-arch { opacity: 1; transform: none; }
   .write, .nm { clip-path: none !important; }
 }
 
@@ -1442,3 +1443,30 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .linkish { padding: 12px 0 4px; border: 0; border-bottom: 1px solid var(--gold); background: none; font: inherit; color: var(--maroon); cursor: pointer; margin-left: 6px; }
 .writing__season { margin: 14px 0 0; font: 400 12px/1.5 var(--text); letter-spacing: .26em; text-transform: uppercase; color: var(--gold-deep); }
 .inscription__title--narrow { max-width: 9em; margin-left: auto !important; margin-right: auto !important; }
+
+/* ---------- Painted rooms in the corridor ---------- */
+/* .proom is the painting at its own pixel size; the camera moves it with one transform. */
+.scene--painted { background: #140c0a; }
+.proom { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.proom__wall { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.proom__view { position: absolute; z-index: 0; background-color: #2a1510; }
+.proom__view--maroon { background: radial-gradient(ellipse at 50% 45%, rgba(255, 238, 205, .25), rgba(255, 238, 205, 0) 70%), url("../assets/rooms/maroon-view.webp") 50% 36% / auto 150% no-repeat, #5c1a1b; }
+.proom__view--green { background: radial-gradient(ellipse at 50% 60%, #35594a, #1F3A2E 72%); }
+.proom__door { position: absolute; z-index: 2; perspective: 1400px; }
+.proom .paraat { z-index: 3; position: absolute; }
+.proom__tag, .proom__words { position: absolute; z-index: 3; transform: translate(-50%, -50%); text-align: center; }
+.proom__tag { padding: 26px 24px 28px; gap: 6px; }
+.proom__words { padding: 0 10px; }
+.proom .inscription__dev { margin: 0; font: 400 68px/1.15 var(--dev); color: var(--maroon); }
+.proom .inscription__small { margin: 0; font: 400 12px/1.5 var(--text); letter-spacing: .32em; padding-left: .32em; text-transform: uppercase; color: var(--cocoa); }
+.proom .inscription__title { margin: 12px 0 0; font: 400 40px/1.1 var(--display); letter-spacing: .1em; padding-left: .1em; text-transform: uppercase; }
+.proom .inscription__rule { display: block; width: 60px; height: 1px; margin: 16px auto; background: var(--gold); }
+.proom .inscription__text { margin: 0; font: 300 18px/1.6 var(--text); color: var(--cocoa); }
+.proom__words .inscription__small { color: var(--gold); }
+.proom__words .inscription__title { color: var(--gold); }
+.proom__words .inscription__text { color: rgba(242, 233, 225, .88); }
+.proom__tag > *, .proom__words > * { opacity: 0; transform: translateY(10px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
+.scene.is-info .proom__tag > *, .scene.is-info .proom__words > * { opacity: 1; transform: none; }
+.scene.is-info .proom__tag > :nth-child(2), .scene.is-info .proom__words > :nth-child(2) { transition-delay: .35s; }
+.scene.is-info .proom__tag > :nth-child(3), .scene.is-info .proom__words > :nth-child(3) { transition-delay: .7s; }
+.scene.is-info .proom__words > :nth-child(4) { transition-delay: 1s; }
