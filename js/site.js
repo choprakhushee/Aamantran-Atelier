@@ -15,6 +15,13 @@
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const smooth = (t) => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
   const NS = "http://www.w3.org/2000/svg";
+  const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+  // The live motion demo is kept in a <template>; bring it into the page now so the rest of the
+  // script can find it. The gallery hangs it in its painting once the wall is built.
+  const liveStage = document.importNode($("#liveStage").content, true).querySelector(".stage");
+  liveStage.hidden = true;
+  $("#galleryWall").appendChild(liveStage);
 
   /* ---------- The chhatri seal (brand kit: chhatri-line-gold), drawn stroke by stroke ---------- */
 
@@ -107,6 +114,7 @@
     ready.then(() => { timers.push(setTimeout(enter, seen ? 100 : 1300)); });
     timers.push(setTimeout(enter, 5000)); // never hold the page hostage
     gate.addEventListener("click", enter);
+    ["wheel", "touchmove"].forEach((ev) => window.addEventListener(ev, () => { if (body.classList.contains("is-gate")) enter(); }, { passive: true, once: true }));
     window.addEventListener("keydown", (e) => { if (body.classList.contains("is-gate") && (e.key === "Enter" || e.key === " " || e.key === "Escape")) enter(); });
   }
 
@@ -484,6 +492,186 @@
     if (en.isIntersecting) { play("flip"); obs.disconnect(); }
   }, { threshold: 0.45 }).observe(stage);
 
+  /* ---------- The gallery wall ---------- */
+
+  const track = $("#galleryTrack");
+  const viewer = $("#viewer");
+  const viewerScreen = $("#viewerScreen");
+  const motionsEl = $("#motions");
+  const siteLink = $("#viewerSite");
+  const LIVE = { id: "palace-parlour", title: "Watch an invitation open", style: "Palace Parlour", package: "Ready design", sample: true, frame: "carved", live: true };
+  let liveHome = null, current = null, lastFocus = null;
+
+  const visibleIO = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      const li = en.target, v = $("video", li);
+      li.classList.toggle("is-visible", en.isIntersecting);
+      if (!v || reduceMotion) return;
+      if (en.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); }
+      else v.pause();
+    });
+  }, { threshold: 0.35 });
+
+  function hang(p) {
+    const li = document.createElement("li");
+    li.className = "hang";
+    const el = document.createElement(p.live ? "div" : "button");
+    if (p.live) { el.setAttribute("role", "button"); el.tabIndex = 0; } else el.type = "button";
+    el.className = `painting painting--${p.frame || "brass"}`;
+    el.setAttribute("aria-label", `${p.title}: ${p.style}, ${p.package}${p.sample ? ", sample" : ""}. Open it in a phone preview.`);
+    el.innerHTML = '<span class="painting__frame"><span class="painting__mat"><span class="painting__art"></span></span></span>';
+    const art = $(".painting__art", el);
+    if (p.live) {
+      art.appendChild(liveStage);
+      liveStage.hidden = false;
+      liveHome = art;
+    } else {
+      if (p.poster) art.innerHTML = `<img src="${esc(p.poster)}" alt="" loading="lazy" decoding="async">`;
+      if (p.video) {
+        const v = document.createElement("video");
+        Object.assign(v, { muted: true, loop: true, playsInline: true, preload: "none" });
+        v.dataset.src = p.video;
+        if (p.poster) v.poster = p.poster;
+        art.appendChild(v);
+      }
+    }
+    li.appendChild(el);
+    li.insertAdjacentHTML("beforeend", `<p class="plaque"><b>${esc(p.title)}</b><span>${esc(p.style)} · ${esc(p.package)}${p.sample ? " · Sample" : ""}</span></p>`);
+    el.addEventListener("click", (e) => { if (!e.target.closest(".stage__replay")) openViewer(p, li); });
+    el.addEventListener("keydown", (e) => { if (p.live && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openViewer(p, li); } });
+    li.addEventListener("mouseenter", () => { const v = $("video", li); if (v && !reduceMotion) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } });
+    visibleIO.observe(li);
+    return li;
+  }
+
+  function buildWall(list) {
+    track.innerHTML = "";
+    (list.some((p) => p.live) ? list : [LIVE, ...list]).forEach((p) => track.appendChild(hang(p)));
+  }
+  buildWall([LIVE]);
+  fetch("assets/gallery.json", { cache: "no-cache" })
+    .then((r) => r.json())
+    .then((d) => { wallData = d.paintings || []; buildWall(wallData); })
+    .catch((err) => console.warn("Could not load the gallery; showing the live invitation only.", err));
+
+  function fitIframe() {
+    const f = $("iframe", viewerScreen);
+    if (!f) return;
+    const sc = viewerScreen.clientWidth / 390;
+    f.style.setProperty("--s", sc.toFixed(4));
+    f.style.height = viewerScreen.clientHeight / sc + "px";
+  }
+
+  function showViewer(p) {
+    viewerScreen.innerHTML = "";
+    // the poster shows while a website or video loads
+    viewerScreen.style.background = p.poster ? `#fff url("${p.poster}") center / cover` : "";
+    motionsEl.hidden = !p.live;
+    if (p.live) { viewerScreen.appendChild(liveStage); play("flip"); }
+    else if (p.video) viewerScreen.innerHTML = `<video src="${esc(p.video)}" ${p.poster ? `poster="${esc(p.poster)}"` : ""} autoplay muted loop playsinline></video>`;
+    else if (p.website) { viewerScreen.innerHTML = `<iframe src="${esc(p.website)}" title="${esc(p.title)} wedding website"></iframe>`; requestAnimationFrame(fitIframe); }
+    else if (p.poster) viewerScreen.innerHTML = `<img src="${esc(p.poster)}" alt="${esc(p.title)} invitation">`;
+    $("#viewerMeta").textContent = `${p.style} · ${p.package}${p.sample ? " · Sample" : ""}`;
+    $("#viewerTitle").textContent = p.title;
+    siteLink.hidden = !p.website;
+    if (p.website) siteLink.href = p.website;
+    viewer.hidden = false;
+    viewer.classList.add("is-open");
+    body.style.overflow = "hidden";
+    $(".viewer__close").focus({ preventScroll: true });
+  }
+
+  function openViewer(p, li) {
+    current = { p, li };
+    lastFocus = document.activeElement;
+    if (reduceMotion) { showViewer(p); return; }
+    // The camera moves in toward the painting, then the invitation opens in a phone.
+    const r = li.getBoundingClientRect(), t = track.getBoundingClientRect();
+    track.style.transformOrigin = `${r.left + r.width / 2 - t.left}px ${r.top + r.height / 2 - t.top}px`;
+    const k = Math.min((window.innerHeight * 0.9) / r.height, 3);
+    track.style.setProperty("--zoom", `translate(${(window.innerWidth / 2 - (r.left + r.width / 2)).toFixed(0)}px, ${(window.innerHeight / 2 - (r.top + r.height / 2)).toFixed(0)}px) scale(${k.toFixed(2)})`);
+    track.classList.add("is-zooming");
+    setTimeout(() => showViewer(p), 650);
+  }
+
+  function closeViewer() {
+    if (!current) return;
+    if (current.p.live && liveHome) liveHome.appendChild(liveStage);
+    viewerScreen.innerHTML = "";
+    viewer.hidden = true;
+    viewer.classList.remove("is-open");
+    body.style.overflow = "";
+    if (!reduceMotion && track.classList.contains("is-zooming")) {
+      requestAnimationFrame(() => track.classList.remove("is-zooming")); // and the camera steps back
+    }
+    if (lastFocus) lastFocus.focus({ preventScroll: true });
+    const was = current; current = null;
+    return was;
+  }
+
+  let wallData = [];
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-open-painting]");
+    if (!b) return;
+    const p = wallData.find((x) => x.id === b.dataset.openPainting);
+    if (p) { current = { p, li: b }; lastFocus = b; showViewer(p); }
+  });
+  $$("[data-close]", viewer).forEach((b) => b.addEventListener("click", closeViewer));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && current) closeViewer(); });
+  window.addEventListener("resize", fitIframe);
+  $("#viewerLike").addEventListener("click", () => {
+    const was = closeViewer();
+    if (!was) return;
+    const p = was.p;
+    $("#f-design").value = `${p.title} (${p.style})`;
+    const want = p.package === "Couture" ? "Couture" : "Signature";
+    const radio = $(`input[name="interest"][value="${want}"]`);
+    if (radio) radio.checked = true;
+    $("#enquire").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    setTimeout(() => $("#f-name").focus({ preventScroll: true }), reduceMotion ? 0 : 900);
+  });
+
+  // Desktop: the paintings drift at slightly different depths as you scroll.
+  // Phones: a swipe along the wall, the painting in front turned to face you.
+  const SPEEDS = [0.05, -0.035, 0.07, -0.02];
+  function renderWall() {
+    const vh = window.innerHeight;
+    const hangs = $$(".hang", track);
+    if (window.innerWidth > 860) {
+      if (reduceMotion) return;
+      hangs.forEach((li, i) => {
+        const r = li.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        li.style.setProperty("--py", ((r.top + r.height / 2 - vh / 2) * SPEEDS[i % 4]).toFixed(1) + "px");
+      });
+    } else {
+      const t = track.getBoundingClientRect(), mid = t.left + t.width / 2;
+      hangs.forEach((li) => {
+        const r = li.getBoundingClientRect();
+        const off = clamp((r.left + r.width / 2 - mid) / t.width, -1, 1);
+        li.style.setProperty("--tilt", (reduceMotion ? 0 : -off * 28).toFixed(2) + "deg");
+        li.style.setProperty("--sc", (1 - Math.abs(off) * 0.12).toFixed(3));
+      });
+    }
+  }
+  track.addEventListener("scroll", () => requestAnimationFrame(renderWall), { passive: true });
+
+  /* ---------- Personal: their own names, if they arrive with them ---------- */
+  // A link such as ?for=Riya&with=Arjun greets them by name, writes their names into the live
+  // invitation and fills in the enquiry form. Handy when you send the site to a couple.
+  (function personalise() {
+    const q = new URLSearchParams(location.search);
+    const a = (q.get("for") || "").trim().slice(0, 24), b = (q.get("with") || "").trim().slice(0, 24);
+    if (!a) return;
+    const nm1 = $(".nm--1", liveStage), nm2 = $(".nm--2", liveStage);
+    if (nm1) nm1.textContent = a;
+    if (nm2 && b) nm2.innerHTML = `<span class="amp">&amp;</span> ${esc(b)}`;
+    const welcome = $(".inscription--blush .inscription__small");
+    if (welcome) welcome.textContent = b ? `${a} and ${b}, please come in` : `${a}, please come in`;
+    if ($("#f-name")) $("#f-name").value = a;
+    if (b && $("#f-partner")) $("#f-partner").value = b;
+  })();
+
   /* ---------- Nav, palace plan, journey line ---------- */
 
   const nav = $("#nav");
@@ -519,6 +707,7 @@
     steps.style.setProperty("--p", clamp((vh * 0.85 - sr.top) / (sr.height + vh * 0.2), 0, 1).toFixed(3));
 
     renderCorridor();
+    renderWall();
     ticking = false;
   }
   window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
@@ -565,7 +754,7 @@
       const lines = [
         ["Name", name], ["Partner", data.get("partner")], ["WhatsApp", phone], ["Email", email],
         ["Wedding month", data.get("wedding_date")], ["City or venue", data.get("city")],
-        ["Looking for", data.get("interest")], ["Functions", data.getAll("functions").join(", ")],
+        ["Looking for", data.get("interest")], ["Design they liked", data.get("design")], ["Functions", data.getAll("functions").join(", ")],
         ["Our story", data.get("note")],
       ].filter(([, v]) => v && String(v).trim()).map(([k, v]) => `${k}: ${String(v).trim()}`);
       const subject = "Enquiry: " + name + (data.get("partner") ? " & " + data.get("partner") : "");
@@ -586,6 +775,7 @@
       wedding_month: data.get("wedding_date") || "",
       city: (data.get("city") || "").trim(),
       interest: data.get("interest") || "",
+      design: (data.get("design") || "").trim(),
       functions: data.getAll("functions").join(", "),
       note: (data.get("note") || "").trim(),
       page: location.href,

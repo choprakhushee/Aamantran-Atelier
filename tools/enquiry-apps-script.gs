@@ -14,7 +14,7 @@
 
 const COLUMNS = [
   "submitted_at", "name", "partner", "phone", "email", "wedding_month",
-  "city", "interest", "functions", "note", "page",
+  "city", "interest", "design", "functions", "note", "page",
 ];
 
 function doPost(e) {

@@ -1,0 +1,13 @@
+{
+  "_help": "One entry per painting on the gallery wall. Order here is the order on the wall. frame: carved | brass | floral | temple | phulkari | lacquer. package: \"Ready design\" or \"Couture\". poster: a 9:16 still (about 720 x 1280). video: an optional muted 8-12s loop (MP4, 9:16, under 3 MB). website: optional link to that design's wedding website. live: true only for the built-in motion demo.",
+  "paintings": [
+    { "id": "palace-parlour", "title": "Watch an invitation open", "style": "Palace Parlour", "package": "Ready design", "sample": true, "frame": "carved", "live": true },
+    { "id": "rajwada", "title": "Rajwada", "style": "Royal", "package": "Couture", "sample": true, "frame": "carved", "poster": "assets/gallery/rajwada.webp", "video": "", "website": "" },
+    { "id": "lotus-arch", "title": "Lotus Arch", "style": "Pastel floral", "package": "Ready design", "sample": true, "frame": "floral", "poster": "assets/gallery/lotus-arch.webp", "video": "", "website": "https://choprakhushee.github.io/Wedding-Invites/invites/prerna-weds-sumit/" },
+    { "id": "ivory-line", "title": "Ivory Line", "style": "Minimal modern", "package": "Ready design", "sample": true, "frame": "brass", "poster": "assets/gallery/ivory-line.webp", "video": "", "website": "" },
+    { "id": "kanjeevaram", "title": "Kanjeevaram", "style": "South Indian", "package": "Couture", "sample": true, "frame": "temple", "poster": "assets/gallery/kanjeevaram.webp", "video": "", "website": "" },
+    { "id": "mehendi-garden", "title": "Mehendi Garden", "style": "Pastel mehendi", "package": "Ready design", "sample": true, "frame": "floral", "poster": "assets/gallery/mehendi-garden.webp", "video": "", "website": "" },
+    { "id": "phulkari", "title": "Phulkari", "style": "Punjabi", "package": "Ready design", "sample": true, "frame": "phulkari", "poster": "assets/gallery/phulkari.webp", "video": "", "website": "" },
+    { "id": "sangeet-nights", "title": "Sangeet Nights", "style": "Evening", "package": "Couture", "sample": true, "frame": "lacquer", "poster": "assets/gallery/sangeet-nights.webp", "video": "", "website": "" }
+  ]
+}

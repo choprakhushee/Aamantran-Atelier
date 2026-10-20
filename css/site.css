@@ -197,19 +197,37 @@ strong { font-weight: 500; }
   position: absolute;
   z-index: 2;
   left: 50%;
-  bottom: 26px;
+  bottom: 54px;
   margin: 0;
-  padding: 10px 16px;
+  padding: 16px 28px;
   transform: translateX(-50%);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-sm);
   background: var(--maroon);
   box-shadow: var(--shadow-tag);
-  font: 400 11px/1 var(--text);
+  font: 400 12px/1 var(--text);
   letter-spacing: .3em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--linen);
+  cursor: pointer;
   transition: opacity .8s var(--ease);
 }
-body.is-entering .gate__skip { opacity: 0; }
+.gate__hint {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 22px;
+  margin: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font: 400 11px/1 var(--text);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: #fff3dc;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+  transition: opacity .8s var(--ease);
+}
+body.is-entering .gate__skip, body.is-entering .gate__hint { opacity: 0; }
 body.is-entering .gate__seam { animation: none; opacity: 0; }
 body.is-entering .gate__leaf--l { transform: rotateY(-100deg); filter: brightness(.6); }
 body.is-entering .gate__leaf--r { transform: rotateY(100deg); filter: brightness(.6); }
@@ -339,7 +357,8 @@ body.is-gate .nav { transform: translateY(-105%); }
   white-space: nowrap;
 }
 .plan.is-dark span { color: var(--gold); background: var(--maroon); }
-.plan:hover span { opacity: 1; transform: none; }
+.plan:hover span, .plan:focus-within span { opacity: 1; transform: none; }
+.plan small { display: block; margin-top: 4px; font-size: 9px; letter-spacing: .2em; opacity: .8; text-align: right; }
 body.is-gate .plan { opacity: 0; }
 @media (max-width: 1100px) { .plan { display: none; } }
 
@@ -621,6 +640,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   height: var(--dh);
   perspective: 1500px;
 }
+.doorway--floral { --door-l: url("../assets/art/gate-door-l.webp"); --door-r: url("../assets/art/gate-door-r.webp"); }
 .doorway--green { --door-l: url("../assets/art/door-green-l.webp"); --door-r: url("../assets/art/door-green-r.webp"); }
 .scene[data-door="right"] .doorway { left: calc(100vw + 34vw - var(--dh) * .236); }
 .scene[data-door="left"] .doorway { left: calc(-34vw - var(--dh) * .236); }
@@ -800,39 +820,193 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .darbar__rule.is-in { transform: none; }
 @media (max-width: 760px) { .darbar__cols { grid-template-columns: 1fr; gap: 22px; } .darbar__sprig { opacity: .35; } }
 
-/* ---------- The Gallery ---------- */
+/* ---------- The Gallery: a wall of framed invitations ---------- */
 
-.gallery {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: 6vw;
-  align-items: center;
-  padding: clamp(110px, 12vw, 190px) var(--gutter);
-  background: var(--linen);
+.gallery { padding: clamp(110px, 12vw, 180px) 0 clamp(90px, 10vw, 150px); background: var(--linen); overflow: hidden; }
+.gallery__head { padding: 0 var(--gutter); max-width: 900px; }
+.wall {
+  position: relative;
+  margin-top: 64px;
+  padding: 90px var(--gutter) 110px;
+  background: #e2c6bb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.011 .018' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.72 0 0 0 0 0.52 0 0 0 0 0.48 0 0 0 1.1 -.48'/%3E%3C/filter%3E%3Crect width='400' height='400' fill='%23e2c6bb'/%3E%3Crect width='400' height='400' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-shadow: inset 0 24px 40px -24px rgba(43, 31, 26, .35), inset 0 -10px 0 #e9dcc6, inset 0 -12px 0 var(--gold);
+  perspective: 1600px;
 }
-.motions { display: grid; margin-top: 44px; border-top: 1px solid var(--gold); }
-.motion {
+.wall__rail { position: absolute; left: 0; right: 0; top: 34px; height: 7px; background: linear-gradient(#f0d9a4, var(--gold) 50%, #8f6c35); box-shadow: 0 2px 4px rgba(43, 31, 26, .25); }
+.wall__track {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1500px;
   display: grid;
-  grid-template-columns: minmax(150px, .8fr) 1.5fr auto;
-  align-items: baseline;
-  gap: 4px 20px;
-  padding: 18px 4px 18px 0;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 90px clamp(24px, 3.4vw, 64px);
+  align-items: start;
+  transform-origin: 50% 50%;
+  transition: transform .75s var(--ease), opacity .75s var(--ease);
+}
+.wall__track.is-zooming { transform: var(--zoom); opacity: .0; }
+.wall__hint { display: none; }
+
+.hang { position: relative; translate: 0 var(--py, 0px); will-change: translate; }
+/* staggered heights, as a salon hang: every other painting sits lower */
+.hang:nth-child(4n + 2) { margin-top: 70px; }
+.hang:nth-child(4n + 3) { margin-top: 24px; }
+.hang:nth-child(4n + 4) { margin-top: 96px; }
+/* a brass hook and its cord */
+.hang::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -46px;
+  width: 54px;
+  height: 46px;
+  margin-left: -27px;
+  background:
+    radial-gradient(circle at 50% 4px, #f0d9a4 0 3px, #8f6c35 3.5px 5px, transparent 5.5px),
+    linear-gradient(to bottom right, transparent calc(50% - 1px), #8f6c35 50%, transparent calc(50% + 1px)) 0 4px / 50% 42px no-repeat,
+    linear-gradient(to bottom left, transparent calc(50% - 1px), #8f6c35 50%, transparent calc(50% + 1px)) 100% 4px / 50% 42px no-repeat;
+}
+
+.painting {
+  display: block;
+  width: 100%;
+  padding: 0;
   border: 0;
-  border-bottom: 1px solid var(--hairline);
   background: none;
-  text-align: left;
-  cursor: pointer;
-  transition: padding .8s var(--ease), background-color .8s var(--ease);
+  cursor: zoom-in;
+  text-align: inherit;
+  transition: transform .9s var(--ease);
+  transform-style: preserve-3d;
 }
-.motion b { font: 400 20px/1.2 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--gold-deep); transition: color .8s var(--ease); }
-.motion span { font-size: 16px; line-height: 1.4; color: var(--cocoa); }
-.motion i { font: normal 400 10px/1.4 var(--text); letter-spacing: .26em; text-transform: uppercase; color: var(--cocoa); }
-.motion:hover { padding-left: 12px; }
-.motion.is-on { padding-left: 18px; background: var(--blush); }
-.motion.is-on b { color: var(--maroon); }
-@media (max-width: 1200px) { .motion { grid-template-columns: 1fr; } .motion i { display: none; } }
+.painting:hover { transform: translateY(-6px) rotateX(2deg); }
+.painting:focus-visible { outline: 2px solid var(--maroon); outline-offset: 10px; }
+.painting__frame { position: relative; display: block; padding: var(--fp, 16px); background: var(--fb); box-shadow: var(--shadow-tag), 0 30px 50px -30px rgba(43, 31, 26, .6); }
+.painting__mat { position: relative; display: block; padding: var(--mp, 0); background: var(--mb, transparent); box-shadow: var(--ms, none); }
+.painting__art { position: relative; display: block; aspect-ratio: 9 / 16; overflow: hidden; background: #1c0e0a; }
+.painting__art img, .painting__art video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hang.is-visible .painting__art img { animation: kenburns 14s var(--ease) infinite alternate; }
+.painting__art .stage { position: absolute; inset: 0; aspect-ratio: auto; display: grid; place-items: center; padding: 8%; box-shadow: none; container-type: inline-size; }
+.painting__art .stage .invite { width: 100%; height: auto; aspect-ratio: 1; }
+.painting__art .stage__replay { display: none; }
+@keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.07) translateY(-1.5%); } }
 
-.stagewrap { justify-self: center; width: 100%; max-width: 620px; }
+/* frames, one per style */
+.painting--carved { --fp: clamp(14px, 1.6vw, 24px); --fb: linear-gradient(135deg, #f3dca6, #b88d48 30%, #f0d9a4 50%, #9c7337 72%, #e9cf94); }
+.painting--carved .painting__frame::before { content: ""; position: absolute; inset: 5px; border: 3px dotted rgba(110, 79, 31, .75); pointer-events: none; }
+.painting--carved .painting__mat { --mp: 5px; --mb: linear-gradient(#8f6c35, #e9cf94); }
+.painting--brass { --fp: 5px; --fb: linear-gradient(135deg, #e7c98c, #9c7337 50%, #e7c98c); }
+.painting--brass .painting__mat { --mp: clamp(16px, 1.8vw, 28px); --mb: #f7f3ea; --ms: inset 0 0 0 1px rgba(43, 31, 26, .12), inset 0 6px 12px rgba(43, 31, 26, .12); }
+.painting--floral { --fp: 10px; --fb: #e6cfc6; }
+.painting--floral .painting__frame { box-shadow: var(--shadow-tag), inset 0 0 0 2px var(--gold), 0 30px 50px -30px rgba(43, 31, 26, .6); }
+.painting--floral .painting__mat { --mp: clamp(18px, 2vw, 30px); --mb: #fbf7ef; }
+.painting--floral .painting__mat::before, .painting--floral .painting__mat::after { content: ""; position: absolute; z-index: 1; width: 34%; aspect-ratio: 1; background: url("../assets/motifs/corner-vine.svg") 0 0 / contain no-repeat; pointer-events: none; }
+.painting--floral .painting__mat::before { left: 2px; top: 2px; }
+.painting--floral .painting__mat::after { right: 2px; bottom: 2px; transform: rotate(180deg); }
+.painting--temple { --fp: clamp(12px, 1.4vw, 20px); --fb: repeating-conic-gradient(from 45deg, #c9a56b 0 25%, #7a1f26 0 50%) 0 0 / 12px 12px; }
+.painting--temple .painting__mat { --mp: 6px; --mb: #1f5a4a; --ms: inset 0 0 0 2px #e2b04a; }
+.painting--phulkari { --fp: clamp(12px, 1.4vw, 18px); --fb: repeating-linear-gradient(45deg, #f2a93b 0 6px, #b8325a 6px 12px, #f6d35e 12px 18px, #b8325a 18px 24px); }
+.painting--phulkari .painting__mat { --mp: 4px; --mb: #fff6e8; }
+.painting--lacquer { --fp: clamp(12px, 1.4vw, 18px); --fb: linear-gradient(135deg, #2a1517, #120a0b 60%, #2a1517); }
+.painting--lacquer .painting__mat { --mp: 3px; --mb: var(--gold); }
+
+/* the museum plaque */
+.plaque {
+  display: grid;
+  gap: 3px;
+  width: max-content;
+  max-width: 100%;
+  margin: 22px auto 0;
+  padding: 10px 18px 11px;
+  background: linear-gradient(135deg, #f0d9a4, #c9a56b 55%, #a9844a);
+  box-shadow: 0 1px 0 rgba(255, 248, 235, .6) inset, 0 3px 8px rgba(43, 31, 26, .25);
+  text-align: center;
+  color: var(--ink);
+}
+.plaque b { font: 400 14px/1.2 var(--display); letter-spacing: .14em; padding-left: .14em; text-transform: uppercase; }
+.plaque span { font: 400 11px/1.4 var(--text); letter-spacing: .1em; color: #3d2c20; }
+
+/* phones: one painting at a time along the wall, swiped */
+@media (max-width: 860px) {
+  .wall { padding: 80px 0 70px; }
+  .wall__track {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 50px 14vw 20px;
+    scrollbar-width: none;
+    perspective: 900px;
+  }
+  .wall__track::-webkit-scrollbar { display: none; }
+  .hang { flex: 0 0 72vw; margin: 0 !important; padding: 0 5vw; scroll-snap-align: center; translate: none; transform: rotateY(var(--tilt, 0deg)) scale(var(--sc, 1)); transition: transform .3s linear; }
+  .hang::before { top: -46px; }
+  .wall__hint { display: block; margin: 18px 0 0; text-align: center; font: 400 11px/1 var(--text); letter-spacing: .3em; text-transform: uppercase; color: var(--cocoa); }
+}
+
+/* ---------- The viewing room ---------- */
+
+.viewer { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 20px; }
+.viewer__backdrop { position: absolute; inset: 0; background: rgba(23, 13, 9, .86); }
+.viewer[hidden] { display: none; }
+.viewer.is-open .viewer__backdrop, .viewer.is-open .viewer__inner { animation: fade-in .6s var(--ease) both; }
+.viewer__inner { position: relative; display: flex; align-items: center; gap: clamp(28px, 4vw, 70px); max-height: 100%; }
+.viewer__close {
+  position: absolute;
+  right: 0;
+  top: -6px;
+  translate: 0 -100%;
+  padding: 12px 16px;
+  border: 1px solid rgba(242, 233, 225, .5);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: 400 11px/1 var(--text);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--linen);
+  cursor: pointer;
+}
+.viewer__phone {
+  position: relative;
+  height: min(78svh, 760px);
+  aspect-ratio: 390 / 820;
+  padding: 11px;
+  border-radius: 46px;
+  background: linear-gradient(145deg, #3a261b, #120a07 50%, #2a1a12);
+  box-shadow: 0 0 0 1px rgba(201, 165, 107, .5), 0 40px 80px rgba(0, 0, 0, .5);
+}
+.viewer__notch { position: absolute; z-index: 2; left: 50%; top: 20px; width: 84px; height: 24px; margin-left: -42px; border-radius: 20px; background: #0c0705; }
+.viewer__screen { position: relative; width: 100%; height: 100%; border-radius: 36px; overflow: hidden; background: var(--blush); }
+.viewer__screen > img, .viewer__screen > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.viewer__screen > img { animation: kenburns 12s var(--ease) infinite alternate; }
+.viewer__screen > iframe { position: absolute; left: 0; top: 0; width: 390px; height: 798px; border: 0; transform-origin: 0 0; transform: scale(var(--s, 1)); }
+.viewer__screen > .stage { position: absolute; inset: 0; aspect-ratio: auto; display: grid; align-content: center; padding: 8%; box-shadow: none; container-type: inline-size; }
+.viewer__screen > .stage .invite { height: auto; aspect-ratio: 1; }
+.viewer__side { width: min(380px, 34vw); padding: 34px 32px 36px; background: var(--linen); border-top: 2px solid var(--gold); box-shadow: var(--shadow-tag); }
+.viewer__title { margin: 0; font: 400 clamp(26px, 2.4vw, 34px)/1.15 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.viewer__actions { display: grid; gap: 12px; margin-top: 28px; }
+.viewer__actions .btn { width: 100%; padding: 17px 20px; letter-spacing: .2em; }
+.btn--line-maroon { background: transparent; color: var(--maroon); }
+.btn--line-maroon:hover { background: var(--maroon); color: var(--linen); }
+.motions { display: grid; margin-top: 22px; border-top: 1px solid var(--gold); }
+.motions[hidden] { display: none; }
+.motion { display: grid; gap: 2px; padding: 12px 4px 12px 0; border: 0; border-bottom: 1px solid var(--hairline); background: none; text-align: left; cursor: pointer; transition: padding .8s var(--ease), background-color .8s var(--ease); }
+.motion b { font: 400 15px/1.25 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--gold-deep); }
+.motion span { font-size: 14px; line-height: 1.35; color: var(--cocoa); }
+.motion:hover { padding-left: 8px; }
+.motion.is-on { padding-left: 12px; background: var(--blush); }
+.motion.is-on b { color: var(--maroon); }
+@keyframes fade-in { from { opacity: 0; } }
+@media (max-width: 860px) {
+  .viewer { align-items: start; overflow-y: auto; padding: 64px 16px 24px; }
+  .viewer__inner { flex-direction: column; gap: 20px; }
+  .viewer__phone { height: min(64svh, 600px); }
+  .viewer__side { width: 100%; padding: 22px 20px 24px; }
+  .viewer__close { top: -10px; }
+}
+
+/* ---------- The live invitation (shown in a painting and in the viewer) ---------- */
+
 .stage {
   position: relative;
   aspect-ratio: 1;
@@ -901,9 +1075,10 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 .rm--mehendi { background: var(--p-vine); }
 .rm--sangeet { background: var(--p-lattice); }
 .rm--wedding { background: var(--p-damask); background-color: var(--maroon); }
-.rm__tag { width: min(80%, 360px); padding: 30px 26px 32px; }
-.rm__tag b { font-size: clamp(26px, 3vw, 38px); padding-left: .12em; }
-.rm__tag span { font-size: 15px; }
+.rm__tag { width: 80%; padding: 6cqw 5cqw; gap: 1.4cqw; }
+.rm__tag b { font-size: 6.4cqw; padding-left: .12em; }
+.rm__tag span { font-size: max(2.8cqw, 10px); }
+.rm__tag small { font-size: max(2.2cqw, 8px); }
 .rm__tag b, .rm__tag small, .rm__tag span { opacity: 0; transform: translateY(8px); transition: opacity 1s var(--ease) .7s, transform 1s var(--ease) .7s; }
 .rm.is-on .rm__tag b, .rm.is-on .rm__tag small, .rm.is-on .rm__tag span { opacity: 1; transform: none; }
 
@@ -921,9 +1096,9 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
 }
 .fx--bloom.is-on { opacity: 1; transition: opacity 1.2s var(--ease); }
 .fx--bloom .bloom-a { width: 30%; }
-.bloom__quote { margin: 7% 0 0; font: 400 clamp(22px, 3.2vw, 36px)/1.2 var(--script); }
-.bloom__word { margin: 7% 0 0; font: 400 clamp(16px, 2.2vw, 24px)/1 var(--display); letter-spacing: .2em; padding-left: .2em; }
-.bloom__desc { margin: 10px 0 0; font: 400 clamp(8px, 1vw, 11px)/1 var(--display); letter-spacing: .5em; padding-left: .5em; color: var(--gold); }
+.bloom__quote { margin: 7% 0 0; font: 400 6cqw/1.2 var(--script); }
+.bloom__word { margin: 7% 0 0; font: 400 4cqw/1 var(--display); letter-spacing: .2em; padding-left: .2em; }
+.bloom__desc { margin: 10px 0 0; font: 400 max(1.8cqw, 7px)/1 var(--display); letter-spacing: .5em; padding-left: .5em; color: var(--gold); }
 
 /* A passing light across the emblem — the lotus bud catching it. */
 .bloom-a { position: relative; display: block; }
@@ -952,14 +1127,6 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   text-transform: uppercase;
   color: var(--maroon);
   cursor: pointer;
-}
-.stagewrap__note { margin: 22px 0 0; text-align: center; font: 400 11px/1.5 var(--text); letter-spacing: .22em; text-transform: uppercase; color: var(--cocoa); }
-
-@media (max-width: 960px) {
-  .gallery { grid-template-columns: 1fr; gap: 0; }
-  .gallery__copy { display: contents; }
-  .stagewrap { order: 1; margin: 44px 0 10px; }
-  .motions { order: 2; }
 }
 
 /* ---------- The Colonnade ---------- */
@@ -1252,3 +1419,27 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 4.4s; }
   .reveal, .in-1, .in-2, .in-3, .hero-arch { opacity: 1; transform: none; }
   .write, .nm { clip-path: none !important; }
 }
+
+/* ---------- Questions ---------- */
+
+.faq { padding: clamp(100px, 11vw, 170px) var(--gutter); background: var(--linen); }
+.faq__head { margin-bottom: 50px; }
+.faq__list { max-width: 900px; border-top: 1px solid var(--gold); }
+.faq__item { border-bottom: 1px solid var(--hairline); }
+.faq__item summary {
+  position: relative;
+  padding: 24px 50px 24px 0;
+  list-style: none;
+  cursor: pointer;
+  font: 400 clamp(19px, 1.6vw, 23px)/1.3 var(--display);
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary::after { content: "+"; position: absolute; right: 6px; top: 50%; translate: 0 -50%; font: 300 28px/1 var(--text); color: var(--gold-deep); transition: rotate .6s var(--ease); }
+.faq__item[open] summary::after { rotate: 45deg; }
+.faq__item summary:focus-visible { outline: 1px solid var(--gold-deep); outline-offset: 4px; }
+.faq__item p { max-width: 42em; margin: 0 0 26px; font-size: 17px; color: var(--cocoa); }
+.linkish { padding: 12px 0 4px; border: 0; border-bottom: 1px solid var(--gold); background: none; font: inherit; color: var(--maroon); cursor: pointer; margin-left: 6px; }
+.writing__season { margin: 14px 0 0; font: 400 12px/1.5 var(--text); letter-spacing: .26em; text-transform: uppercase; color: var(--gold-deep); }
+.inscription__title--narrow { max-width: 9em; margin-left: auto !important; margin-right: auto !important; }
