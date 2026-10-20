@@ -96,8 +96,7 @@ strong { font-weight: 500; }
 
 .body { max-width: 34em; margin: 26px 0 0; font-size: clamp(17px, 1.3vw, 19px); color: var(--cocoa); }
 
-.lockup { display: flex; align-items: center; gap: 14px; margin-left: -12px; padding: 8px 14px 8px 12px; text-decoration: none; background: var(--linen); transition: background-color .8s var(--ease); }
-.nav.is-dark .lockup { background: transparent; }
+.lockup { display: flex; align-items: center; gap: 14px; text-decoration: none; }
 .lockup__a { width: 34px; height: auto; }
 .lockup__word { font: 400 20px/1 var(--display); letter-spacing: .2em; padding-left: .2em; }
 
@@ -151,80 +150,66 @@ strong { font-weight: 500; }
 .tag b { font: 400 clamp(22px, 2.2vw, 30px)/1.15 var(--display); letter-spacing: .12em; text-transform: uppercase; }
 .tag span { max-width: 26em; font-size: 16px; line-height: 1.5; color: var(--cocoa); }
 
-/* ---------- The gate: a palace wall, carved doors that swing open, and you walk through ---------- */
+/* ---------- The gate: two plain maroon doors that swing open ---------- */
 
-.gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; overflow: hidden; }
-.gate__scene {
-  position: absolute;
-  inset: 0;
-  transform-origin: 50% 50%;
-  transition: transform 2.2s cubic-bezier(.55, 0, .45, 1), opacity 1.4s var(--ease);
-}
-.gate__wall {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 50% 45%, rgba(20, 8, 6, 0) 30%, rgba(20, 8, 6, .62) 100%),
-    var(--p-damask);
-  background-color: var(--maroon);
-}
-.gate__doorway {
-  --h: min(86svh, 1300px);
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: calc(var(--h) * .472);
-  height: var(--h);
-  transform: translate(-50%, -50%);
-  perspective: 1600px;
-  filter: drop-shadow(0 30px 50px rgba(10, 4, 3, .6)) drop-shadow(0 0 1px var(--gold));
-}
+.gate { position: fixed; inset: 0; z-index: 100; cursor: pointer; perspective: 1800px; }
 .gate__leaf {
   position: absolute;
   top: 0;
-  width: 50%;
-  height: 100%;
-  object-fit: fill;
+  bottom: 0;
+  width: 50.1%;
+  padding: clamp(16px, 3vw, 44px);
+  background: var(--maroon);
   transition: transform 2s var(--ease), filter 2s var(--ease);
 }
-.gate__leaf--l { left: 0; transform-origin: 0 50%; }
-.gate__leaf--r { right: 0; transform-origin: 100% 50%; }
-.gate__lantern {
-  position: absolute;
-  top: -2px;
-  height: min(42svh, 460px);
-  width: auto;
-  transform-origin: 50% 0;
-  animation: sway 4.5s var(--ease) infinite alternate;
-  filter: drop-shadow(0 0 30px rgba(255, 196, 110, .45));
+.gate__leaf--l { left: 0; transform-origin: 0 50%; box-shadow: inset -2px 0 0 var(--gold); }
+.gate__leaf--r { right: 0; transform-origin: 100% 50%; box-shadow: inset 2px 0 0 var(--gold); }
+/* Inlaid panels with a gold hairline, as on a carved door. */
+.gate__panel {
+  height: 100%;
+  border: 1px solid rgba(201, 165, 107, .55);
+  padding: 14px;
+  display: grid;
+  grid-template-rows: 2.2fr 1fr;
+  gap: 14px;
 }
-.gate__lantern--l { right: calc(50% + min(86svh, 1300px) * .236 + 6vw); }
-.gate__lantern--r { left: calc(50% + min(86svh, 1300px) * .236 + 6vw); animation-delay: -2s; animation-duration: 5s; }
-@media (max-width: 700px) { .gate__lantern { height: 26svh; } .gate__lantern--l { right: auto; left: 2vw; } .gate__lantern--r { left: auto; right: 2vw; } }
+.gate__panel::before, .gate__panel::after {
+  content: "";
+  border: 1px solid rgba(201, 165, 107, .4);
+  background: var(--maroon-deep);
+}
+.gate__panel::before { border-radius: 50% 50% 0 0 / 18% 18% 0 0; }
+/* Brass ring pulls, low on each door so they never sit behind the crest */
+.gate__leaf::after {
+  content: "";
+  position: absolute;
+  top: 66%;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+}
+.gate__leaf--l::after { right: 22px; }
+.gate__leaf--r::after { left: 22px; }
 
+/* The crest is engraved straight onto the doors — no plaque. */
 .gate__crest {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 40%;
   z-index: 2;
-  transform: translate(-50%, -54%);
+  transform: translate(-50%, -50%);
   display: grid;
   justify-items: center;
-  width: min(80vw, 440px);
-  padding: 36px 26px 40px;
-  background: var(--maroon);
-  border: 1px solid rgba(201, 165, 107, .7);
-  outline: 1px solid rgba(201, 165, 107, .35);
-  outline-offset: 6px;
-  box-shadow: var(--shadow-tag);
+  width: min(90vw, 560px);
   text-align: center;
   color: var(--linen);
   transition: opacity 1.2s var(--ease), transform 1.4s var(--ease);
 }
-.gate__chhatri { width: clamp(90px, 14vh, 150px); }
+.gate__chhatri { width: clamp(100px, 17vh, 170px); }
 .gate__word {
-  margin: 26px 0 0;
-  font: 400 clamp(28px, 5vw, 52px)/1 var(--display);
+  margin: 30px 0 0;
+  font: 400 clamp(30px, 6vw, 60px)/1 var(--display);
   letter-spacing: .2em;
   padding-left: .2em;
   opacity: 0;
@@ -232,8 +217,8 @@ strong { font-weight: 500; }
   transition: opacity 1.4s var(--ease) 1.4s, transform 1.4s var(--ease) 1.4s;
 }
 .gate__desc {
-  margin: 14px 0 0;
-  font: 400 clamp(12px, 1.8vw, 18px)/1 var(--display);
+  margin: 16px 0 0;
+  font: 400 clamp(12px, 2vw, 20px)/1 var(--display);
   letter-spacing: .5em;
   padding-left: .5em;
   color: var(--gold);
@@ -243,12 +228,11 @@ strong { font-weight: 500; }
 .gate__skip {
   position: absolute;
   z-index: 2;
-  left: 50%;
-  bottom: 22px;
+  left: 0;
+  right: 0;
+  bottom: 30px;
   margin: 0;
-  padding: 8px 14px;
-  transform: translateX(-50%);
-  background: var(--maroon);
+  text-align: center;
   font: 400 11px/1 var(--text);
   letter-spacing: .3em;
   text-transform: uppercase;
@@ -256,12 +240,10 @@ strong { font-weight: 500; }
   transition: opacity .8s var(--ease);
 }
 body.is-drawing .gate__word, body.is-drawing .gate__desc { opacity: 1; transform: none; }
-body.is-entering .gate__crest { opacity: 0; transform: translate(-50%, -54%) scale(.94); }
+body.is-entering .gate__crest { opacity: 0; transform: translate(-50%, -50%) scale(.96); }
 body.is-entering .gate__skip { opacity: 0; }
-body.is-entering .gate__leaf--l { transform: rotateY(-104deg); filter: brightness(.6); transition-delay: .5s; }
-body.is-entering .gate__leaf--r { transform: rotateY(104deg); filter: brightness(.6); transition-delay: .5s; }
-/* Then step through the doorway, into the light. */
-body.is-walking .gate__scene { transform: scale(6); opacity: 0; transition-delay: 0s, .7s; }
+body.is-entering .gate__leaf--l { transform: rotateY(-104deg); filter: brightness(.55); transition-delay: .6s; }
+body.is-entering .gate__leaf--r { transform: rotateY(104deg); filter: brightness(.55); transition-delay: .6s; }
 body.is-in .gate { display: none; }
 
 /* The chhatri drawing (brand kit: chhatri-line-gold) */
@@ -297,14 +279,14 @@ body.is-in .gate { display: none; }
   gap: 20px;
   padding: 20px var(--gutter);
   color: var(--ink);
+  background: var(--linen);
   transition: background-color .8s var(--ease), color .8s var(--ease), padding .8s var(--ease), transform 1s var(--ease), border-color .8s var(--ease);
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--hairline);
 }
-.nav.is-scrolled { padding-top: 13px; padding-bottom: 13px; background: rgba(242, 233, 225, .96); border-bottom-color: var(--hairline); }
-.nav.is-dark { color: var(--linen); }
-.nav.is-dark.is-scrolled { background: rgba(92, 26, 27, .97); border-bottom-color: rgba(201, 165, 107, .4); }
-.nav.is-dark .lockup__a { content: url("../assets/logos/a-emblem-gold.webp"); }
-.nav.is-hidden { transform: translateY(-100%); }
+.nav.is-scrolled { padding-top: 13px; padding-bottom: 13px; box-shadow: var(--shadow-tag); }
+/* The header steps out of the way as you walk on, and returns when you scroll back up. */
+.nav.is-hidden { transform: translateY(-105%); }
+body.is-gate .nav { transform: translateY(-105%); }
 .nav__links { display: flex; }
 .nav__links a {
   position: relative;
@@ -557,7 +539,7 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
   background: radial-gradient(closest-side, rgba(10, 4, 3, .5), transparent);
   z-index: -1;
 }
-.doorway__light, .gate__light {
+.doorway__light {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at 50% 62%, #fffaf0, #f7deae 40%, #d9a463 100%);
@@ -647,7 +629,8 @@ body.is-entering .in-3 { opacity: 1; transform: none; transition-delay: 3.6s; }
 .darbar__lanterns img:nth-child(1) { height: clamp(220px, 34vw, 520px); }
 .darbar__lanterns img:nth-child(2) { height: clamp(170px, 24vw, 380px); animation-delay: -1.8s; animation-duration: 6s; }
 .darbar__lanterns img:nth-child(3) { height: clamp(250px, 40vw, 600px); animation-delay: -3.2s; animation-duration: 5.4s; }
-@media (max-width: 1000px) { .darbar__lanterns { opacity: .35; right: 2vw; } }
+@media (max-width: 1000px) { .darbar__lanterns { opacity: .3; right: 2vw; } }
+@media (max-width: 700px) { .darbar__lanterns img:nth-child(n) { height: 150px; } .darbar__lanterns img:nth-child(2) { display: none; } }
 .darbar__dev { margin: 0; font: 400 clamp(80px, 13vw, 200px)/1.15 var(--dev); color: var(--gold); }
 .darbar__title {
   position: relative;

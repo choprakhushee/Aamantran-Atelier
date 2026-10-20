@@ -72,9 +72,8 @@
     // The hero's seal is engraved as the forecourt comes into view.
     setTimeout(() => heroArch.classList.add("is-drawn"), 1600);
     setTimeout(() => heroArch.classList.add("is-parted"), 4600);
-    setTimeout(() => body.classList.add("is-walking"), 1900);
-    setTimeout(() => body.classList.remove("is-gate"), 2400);
-    setTimeout(() => body.classList.add("is-in"), 4200);
+    setTimeout(() => body.classList.remove("is-gate"), 1600);
+    setTimeout(() => body.classList.add("is-in"), 2800);
   }
   if (reduceMotion) {
     gate.classList.add("is-drawn", "is-parted");
@@ -82,8 +81,12 @@
     body.classList.add("is-drawing", "is-entering", "is-in");
     body.classList.remove("is-gate");
   } else {
+    // Within one visit, coming back to the page opens the doors straight away.
+    let seen = false;
+    try { seen = sessionStorage.getItem("aa-gate") === "1"; sessionStorage.setItem("aa-gate", "1"); } catch (e) {}
     const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
     Promise.race([fontsReady, new Promise((r) => setTimeout(r, 1500))]).then(() => {
+      if (seen) { requestAnimationFrame(enter); return; }
       requestAnimationFrame(() => {
         gate.classList.add("is-drawn");
         body.classList.add("is-drawing");
@@ -273,10 +276,9 @@
   function onScroll() {
     const y = window.scrollY, vh = window.innerHeight;
     nav.classList.toggle("is-scrolled", y > 30);
-    if (y > vh && y > lastY + 4 && !nav.matches(":focus-within")) nav.classList.add("is-hidden");
-    else if (y < lastY - 4 || y <= vh) nav.classList.remove("is-hidden");
+    if (y > 80 && y > lastY + 4 && !nav.matches(":focus-within")) nav.classList.add("is-hidden");
+    else if (y < lastY - 4 || y <= 80) nav.classList.remove("is-hidden");
     lastY = y;
-    nav.classList.toggle("is-dark", isDark(toneAt(nav.offsetHeight / 2)));
     plan.classList.toggle("is-dark", isDark(toneAt(vh / 2)));
 
     let current = 0;
